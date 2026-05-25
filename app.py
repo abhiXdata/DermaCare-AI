@@ -31,7 +31,7 @@ def load_css():
             color: white !important;
         }
 
-        /* ── EXPANDER HEADER - FIXED ── */
+        /* ── EXPANDER HEADER - FORCED WITH !IMPORTANT ── */
         .streamlit-expanderHeader {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
@@ -39,7 +39,9 @@ def load_css():
             border: none !important;
         }
         
-        .streamlit-expanderHeader p {
+        .streamlit-expanderHeader p,
+        .streamlit-expanderHeader span,
+        .streamlit-expanderHeader div {
             color: white !important;
             font-weight: 600 !important;
         }
@@ -48,11 +50,20 @@ def load_css():
             background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
         }
         
+        /* Expander chevron/svg icon - make it white */
+        .streamlit-expanderHeader svg {
+            fill: white !important;
+            stroke: white !important;
+            color: white !important;
+        }
+        
         /* Expander content area */
         .streamlit-expanderContent {
             background: #ffffff !important;
             border-radius: 0 0 8px 8px !important;
             padding: 1rem !important;
+            border: 1px solid #e0e0e0 !important;
+            border-top: none !important;
         }
         
         /* Expander content text */
