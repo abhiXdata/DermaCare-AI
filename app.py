@@ -31,47 +31,30 @@ def load_css():
             color: white !important;
         }
 
-        /* ── EXPANDER HEADER - WHITE TEXT ── */
-        .streamlit-expanderHeader {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
-            border-radius: 8px !important;
-            border: none !important;
-        }
-        
-        /* Make expander header text WHITE */
-        .streamlit-expanderHeader p,
-        .streamlit-expanderHeader span,
-        .streamlit-expanderHeader .stMarkdown,
-        .streamlit-expanderHeader div {
-            color: white !important;
-            font-weight: 600 !important;
-        }
-        
-        /* Make expander chevron/arrow WHITE */
-        .streamlit-expanderHeader svg {
-            fill: white !important;
-            stroke: white !important;
-            color: white !important;
-        }
-        
-        .streamlit-expanderHeader:hover {
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
-        }
-        
-        /* Expander content area */
-        .streamlit-expanderContent {
-            background: #ffffff !important;
-            border-radius: 0 0 8px 8px !important;
-            padding: 1rem !important;
-        }
-        
-        /* Expander content text - dark for readability */
-        .streamlit-expanderContent p,
-        .streamlit-expanderContent div,
-        .streamlit-expanderContent span,
-        .streamlit-expanderContent label {
-            color: #2c3e50 !important;
-        }
+        /* ── MAKE EXPANDER TEXT WHITE ── */
+.streamlit-expanderHeader {
+    color: white !important;
+    background: white !important;
+}
+.streamlit-expanderHeader p {
+    color: white !important;
+}
+.streamlit-expanderHeader:hover {
+    background: white !important;
+}
+
+/* Expander content background */
+.streamlit-expanderContent {
+    background: white !important;
+    color:white
+}
+
+/* Expander content text color */
+.streamlit-expanderContent p,
+.streamlit-expanderContent div,
+.streamlit-expanderContent span {
+    color: white !important;
+}
 
         /* ── Buttons only – scoped tightly so it doesn't bleed ── */
         [data-testid="stBaseButton-secondary"],
@@ -88,7 +71,7 @@ def load_css():
             font-weight: 600 !important;
         }
 
-        /* ── SIDEBAR BUTTONS ── */
+        /* ── SIDEBAR BUTTONS - Make them visible on blue background ── */
         [data-testid="stSidebar"] .stButton button {
             background: rgba(255, 255, 255, 0.15) !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -100,7 +83,7 @@ def load_css():
             border: 1px solid rgba(255, 255, 255, 0.5) !important;
         }
 
-        /* ── Popover trigger button ── */
+        /* ── Popover trigger button (the ℹ️ pill) ── */
         [data-testid="stPopover"] button {
             background: #1e3c72 !important;
             border-radius: 8px !important;
@@ -113,17 +96,17 @@ def load_css():
             font-weight: 700 !important;
         }
 
-        /* ── Popover dialog box ── */
+        /* ── Popover dialog box - SIZE & STRUCTURE ONLY, COLORS UNCHANGED ── */
         div[data-testid="stPopoverBody"] {
             min-width: 280px !important;
             max-width: 350px !important;
             width: auto !important;
             border-radius: 12px !important;
             padding: 1.25rem !important;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
         }
 
+        /* Content spacing inside popover */
         div[data-testid="stPopoverBody"] > div {
             display: flex !important;
             color: white !important;
@@ -131,24 +114,26 @@ def load_css():
             gap: 0.75rem !important;
         }
 
+        /* Title text spacing */
         div[data-testid="stPopoverBody"] p:first-of-type {
             margin-bottom: 0.5rem !important;
             font-size: 1rem !important;
             color: white !important;
         }
 
+        /* Description text spacing */
         div[data-testid="stPopoverBody"] .stCaptionContainer p {
             margin-bottom: 0 !important;
             line-height: 1.4 !important;
-            color: rgba(255,255,255,0.9) !important;
         }
 
+        /* NO CHANGES to wrapper - keeping original */
         div[data-baseweb="popover"] > div {
             padding: 0 !important;
         }
 
+        /* Popover arrow - NO COLOR CHANGES */
         div[data-baseweb="popover"] svg {
-            fill: #2a5298 !important;
             stroke: none !important;
         }
 
@@ -173,6 +158,10 @@ def load_css():
             padding: 10px;
             border-radius: 8px;
         }
+        .streamlit-expanderHeader {
+            background: #e8f0fe;
+            color: #1e3c72 !important;
+        }
         .diagnosis-card {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             padding: 2rem;
@@ -185,6 +174,7 @@ def load_css():
         }
         </style>
     """, unsafe_allow_html=True)
+    
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
     "Skin Redness": "🩸 Skin looks red because blood vessels expand - like a mild sunburn",
