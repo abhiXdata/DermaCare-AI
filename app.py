@@ -34,18 +34,18 @@ def load_css():
         /* ── MAKE EXPANDER TEXT WHITE ── */
 .streamlit-expanderHeader {
     color: white !important;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+    background: white !important;
 }
 .streamlit-expanderHeader p {
     color: white !important;
 }
 .streamlit-expanderHeader:hover {
-    background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
+    background: white !important;
 }
 
 /* Expander content background */
 .streamlit-expanderContent {
-    background: #f0f2f6 !important;
+    background: white !important;
     color:white
 }
 
