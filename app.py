@@ -31,30 +31,31 @@ def load_css():
             color: white !important;
         }
 
-        /* ── EXPANDER HEADER - FORCED WITH !IMPORTANT ── */
+        /* ── EXPANDER HEADER - WHITE TEXT ── */
         .streamlit-expanderHeader {
-            background:  linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
-            color: white !important;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             border-radius: 8px !important;
             border: none !important;
         }
         
+        /* Make expander header text WHITE */
         .streamlit-expanderHeader p,
         .streamlit-expanderHeader span,
+        .streamlit-expanderHeader .stMarkdown,
         .streamlit-expanderHeader div {
             color: white !important;
             font-weight: 600 !important;
         }
         
-        .streamlit-expanderHeader:hover {
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
-        }
-        
-        /* Expander chevron/svg icon - make it white */
+        /* Make expander chevron/arrow WHITE */
         .streamlit-expanderHeader svg {
             fill: white !important;
             stroke: white !important;
             color: white !important;
+        }
+        
+        .streamlit-expanderHeader:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
         }
         
         /* Expander content area */
@@ -62,11 +63,9 @@ def load_css():
             background: #ffffff !important;
             border-radius: 0 0 8px 8px !important;
             padding: 1rem !important;
-            border: 1px solid #e0e0e0 !important;
-            border-top: none !important;
         }
         
-        /* Expander content text */
+        /* Expander content text - dark for readability */
         .streamlit-expanderContent p,
         .streamlit-expanderContent div,
         .streamlit-expanderContent span,
@@ -89,7 +88,7 @@ def load_css():
             font-weight: 600 !important;
         }
 
-        /* ── SIDEBAR BUTTONS - Make them visible on blue background ── */
+        /* ── SIDEBAR BUTTONS ── */
         [data-testid="stSidebar"] .stButton button {
             background: rgba(255, 255, 255, 0.15) !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -101,7 +100,7 @@ def load_css():
             border: 1px solid rgba(255, 255, 255, 0.5) !important;
         }
 
-        /* ── Popover trigger button (the ℹ️ pill) ── */
+        /* ── Popover trigger button ── */
         [data-testid="stPopover"] button {
             background: #1e3c72 !important;
             border-radius: 8px !important;
@@ -125,7 +124,6 @@ def load_css():
             color: white !important;
         }
 
-        /* Content spacing inside popover */
         div[data-testid="stPopoverBody"] > div {
             display: flex !important;
             color: white !important;
@@ -133,26 +131,22 @@ def load_css():
             gap: 0.75rem !important;
         }
 
-        /* Title text spacing */
         div[data-testid="stPopoverBody"] p:first-of-type {
             margin-bottom: 0.5rem !important;
             font-size: 1rem !important;
             color: white !important;
         }
 
-        /* Description text spacing */
         div[data-testid="stPopoverBody"] .stCaptionContainer p {
             margin-bottom: 0 !important;
             line-height: 1.4 !important;
             color: rgba(255,255,255,0.9) !important;
         }
 
-        /* Remove white wrapper Streamlit adds around popover */
         div[data-baseweb="popover"] > div {
             padding: 0 !important;
         }
 
-        /* Popover arrow */
         div[data-baseweb="popover"] svg {
             fill: #2a5298 !important;
             stroke: none !important;
