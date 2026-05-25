@@ -46,13 +46,14 @@ def load_css():
 /* Expander content background */
 .streamlit-expanderContent {
     background: #f0f2f6 !important;
+    color:white
 }
 
 /* Expander content text color */
 .streamlit-expanderContent p,
 .streamlit-expanderContent div,
 .streamlit-expanderContent span {
-    color: #2c3e50 !important;
+    color: white !important;
 }
 
         /* ── Buttons only – scoped tightly so it doesn't bleed ── */
