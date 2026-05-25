@@ -31,6 +31,30 @@ def load_css():
             color: white !important;
         }
 
+        /* ── MAKE EXPANDER TEXT WHITE ── */
+.streamlit-expanderHeader {
+    color: white !important;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+}
+.streamlit-expanderHeader p {
+    color: white !important;
+}
+.streamlit-expanderHeader:hover {
+    background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
+}
+
+/* Expander content background */
+.streamlit-expanderContent {
+    background: #f0f2f6 !important;
+}
+
+/* Expander content text color */
+.streamlit-expanderContent p,
+.streamlit-expanderContent div,
+.streamlit-expanderContent span {
+    color: #2c3e50 !important;
+}
+
         /* ── Buttons only – scoped tightly so it doesn't bleed ── */
         [data-testid="stBaseButton-secondary"],
         [data-testid="stBaseButton-primary"] {
