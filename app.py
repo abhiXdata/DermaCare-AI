@@ -251,48 +251,98 @@ DISEASE_ICONS = {
 def load_dataset():
     try:
         df = pd.read_csv('dermatology.csv')
+        
+        # Replace all '?' with NaN for all columns
+        df = df.replace('?', np.nan)
+        
+        # Handle Age column
         if 'Age' in df.columns:
-            if df['Age'].dtype == 'object':
-                df['Age'] = pd.to_numeric(df['Age'].replace('?', np.nan), errors='coerce')
-                df['Age'].fillna(df['Age'].median(), inplace=True)
+            df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
+            df['Age'].fillna(df['Age'].median(), inplace=True)
         else:
             df['Age'] = np.random.randint(1, 90, len(df))
-
-        clinical_cols = [col for col in CLINICAL_FEATURES.values() if col in df.columns] + ['Age']
-        histo_cols = [col for col in HISTOPATHOLOGY_FEATURES.values() if col in df.columns]
-
+        
+        # Handle all other columns - convert to numeric
+        for col in df.columns:
+            if col != 'Age' and col != 'class':
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+                # Fill NaN with median of that column
+                df[col].fillna(df[col].median(), inplace=True)
+        
+        # Get available clinical columns
+        clinical_cols = []
+        for col in CLINICAL_FEATURES.values():
+            if col in df.columns:
+                clinical_cols.append(col)
+        
+        # Get available histopathology columns
+        histo_cols = []
+        for col in HISTOPATHOLOGY_FEATURES.values():
+            if col in df.columns:
+                histo_cols.append(col)
+        
+        clinical_cols.append('Age')
+        
+        # If no valid columns found, create demo data
         if len(clinical_cols) <= 1:
             return create_demo_data()
+        
         return df, clinical_cols, histo_cols
-    except:
+        
+    except Exception as e:
+        st.error(f"Error loading dataset: {str(e)}")
         return create_demo_data()
-
+        
 def create_demo_data():
     np.random.seed(42)
     n = 366
     data = {}
+    
+    # Clinical features - ensure numeric values only (0-3, and 0-1 for family_history)
     for col in CLINICAL_FEATURES.values():
-        data[col] = np.random.randint(0, 4 if col != 'family_history' else 2, n)
+        if col == 'family_history':
+            data[col] = np.random.randint(0, 2, n)  # 0 or 1 only
+        else:
+            data[col] = np.random.randint(0, 4, n)  # 0-3 only
+    
+    # Histopathology features - ensure numeric values only (0-3)
     for col in HISTOPATHOLOGY_FEATURES.values():
-        data[col] = np.random.randint(0, 4, n)
-    data['Age'] = np.random.randint(1, 90, n)
-    data['class'] = np.random.randint(1, 7, n)
+        data[col] = np.random.randint(0, 4, n)  # 0-3 only
+    
+    data['Age'] = np.random.randint(1, 90, n)  # 1-89 only
+    data['class'] = np.random.randint(1, 7, n)  # 1-6 only
+    
     df = pd.DataFrame(data)
+    
+    # Ensure all columns are numeric
+    for col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+        df[col].fillna(df[col].median(), inplace=True)
+    
     clinical_cols = list(CLINICAL_FEATURES.values()) + ['Age']
     histo_cols = list(HISTOPATHOLOGY_FEATURES.values())
+    
     return df, clinical_cols, histo_cols
-
+    
 @st.cache_resource
 def train_model():
     df, clinical_cols, histo_cols = load_dataset()
     y = df['class']
     all_cols = clinical_cols + histo_cols
+    
+    # Final check - ensure no NaN values remain
+    X = df[all_cols].copy()
+    
+    # Fill any remaining NaN with 0
+    X = X.fillna(0)
+    y = y.fillna(1).astype(int)
+    
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(df[all_cols])
+    X_scaled = scaler.fit_transform(X)
     model = RandomForestClassifier(random_state=42, n_estimators=100)
     model.fit(X_scaled, y)
     return model, scaler, all_cols
-
+    
 # ==================== CACHED MODEL METRICS (REDUNDANCY REMOVED) ====================
 @st.cache_data
 def get_model_metrics():
