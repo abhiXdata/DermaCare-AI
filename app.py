@@ -31,30 +31,37 @@ def load_css():
             color: white !important;
         }
 
-        /* ── MAKE EXPANDER TEXT WHITE ── */
-.streamlit-expanderHeader {
-    color: white !important;
-    background: white !important;
-}
-.streamlit-expanderHeader p {
-    color: white !important;
-}
-.streamlit-expanderHeader:hover {
-    background: white !important;
-}
-
-/* Expander content background */
-.streamlit-expanderContent {
-    background: white !important;
-    color:white
-}
-
-/* Expander content text color */
-.streamlit-expanderContent p,
-.streamlit-expanderContent div,
-.streamlit-expanderContent span {
-    color: white !important;
-}
+        /* ── EXPANDER HEADER - FIXED ── */
+        .streamlit-expanderHeader {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+            color: white !important;
+            border-radius: 8px !important;
+            border: none !important;
+        }
+        
+        .streamlit-expanderHeader p {
+            color: white !important;
+            font-weight: 600 !important;
+        }
+        
+        .streamlit-expanderHeader:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
+        }
+        
+        /* Expander content area */
+        .streamlit-expanderContent {
+            background: #ffffff !important;
+            border-radius: 0 0 8px 8px !important;
+            padding: 1rem !important;
+        }
+        
+        /* Expander content text */
+        .streamlit-expanderContent p,
+        .streamlit-expanderContent div,
+        .streamlit-expanderContent span,
+        .streamlit-expanderContent label {
+            color: #2c3e50 !important;
+        }
 
         /* ── Buttons only – scoped tightly so it doesn't bleed ── */
         [data-testid="stBaseButton-secondary"],
@@ -96,13 +103,14 @@ def load_css():
             font-weight: 700 !important;
         }
 
-        /* ── Popover dialog box - SIZE & STRUCTURE ONLY, COLORS UNCHANGED ── */
+        /* ── Popover dialog box ── */
         div[data-testid="stPopoverBody"] {
             min-width: 280px !important;
             max-width: 350px !important;
             width: auto !important;
             border-radius: 12px !important;
             padding: 1.25rem !important;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
         }
 
@@ -125,15 +133,17 @@ def load_css():
         div[data-testid="stPopoverBody"] .stCaptionContainer p {
             margin-bottom: 0 !important;
             line-height: 1.4 !important;
+            color: rgba(255,255,255,0.9) !important;
         }
 
-        /* NO CHANGES to wrapper - keeping original */
+        /* Remove white wrapper Streamlit adds around popover */
         div[data-baseweb="popover"] > div {
             padding: 0 !important;
         }
 
-        /* Popover arrow - NO COLOR CHANGES */
+        /* Popover arrow */
         div[data-baseweb="popover"] svg {
+            fill: #2a5298 !important;
             stroke: none !important;
         }
 
@@ -158,10 +168,6 @@ def load_css():
             padding: 10px;
             border-radius: 8px;
         }
-        .streamlit-expanderHeader {
-            background: #e8f0fe;
-            color: #1e3c72 !important;
-        }
         .diagnosis-card {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             padding: 2rem;
@@ -174,7 +180,6 @@ def load_css():
         }
         </style>
     """, unsafe_allow_html=True)
-
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
     "Skin Redness": "🩸 Skin looks red because blood vessels expand - like a mild sunburn",
