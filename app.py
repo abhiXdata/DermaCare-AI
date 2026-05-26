@@ -695,8 +695,8 @@ def diagnosis_page():
                 st.markdown("""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
                     <div style="font-size: 2rem;">📅</div>
-                    <b>Follow-up</b><br>
-                    <small>Schedule in 2-4 weeks</small>
+                    <b style="color: black">Follow-up</b><br>
+                    <small style="color: black">Schedule in 2-4 weeks</small>
                 </div>
                 """, unsafe_allow_html=True)
             
@@ -704,8 +704,8 @@ def diagnosis_page():
                 st.markdown("""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
                     <div style="font-size: 2rem;">🔬</div>
-                    <b>Additional Tests</b><br>
-                    <small>Consider if indicated</small>
+                    <b style="color: black">Additional Tests</b><br>
+                    <small style="color: black">Consider if indicated</small>
                 </div>
                 """, unsafe_allow_html=True)
             
@@ -713,8 +713,8 @@ def diagnosis_page():
                 st.markdown("""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
                     <div style="font-size: 2rem;">💊</div>
-                    <b>Treatment</b><br>
-                    <small>Initiate appropriate therapy</small>
+                    <b style="color: black">Treatment</b><br>
+                    <small style="color: black">Initiate appropriate therapy</small>
                 </div>
                 """, unsafe_allow_html=True)
             
