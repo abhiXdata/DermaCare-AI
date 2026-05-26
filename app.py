@@ -14,7 +14,7 @@ st.set_page_config(
     page_title="DermaCare AI - Dermatology Diagnosis",
     page_icon="🩺",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # ==================== CUSTOM CSS ====================
@@ -32,15 +32,6 @@ def load_css():
             h3 {
                 font-size: 1.2rem !important;
             }
-            .stMarkdown h1 {
-                font-size: 1.8rem !important;
-            }
-            .stMarkdown h2 {
-                font-size: 1.4rem !important;
-            }
-            .stMarkdown h3 {
-                font-size: 1.2rem !important;
-            }
         }
         
         @media (max-width: 480px) {
@@ -53,47 +44,22 @@ def load_css():
             h3 {
                 font-size: 1.1rem !important;
             }
-            .stMarkdown h1 {
-                font-size: 1.5rem !important;
-            }
-            .stMarkdown h2 {
-                font-size: 1.2rem !important;
-            }
-            .stMarkdown h3 {
-                font-size: 1.1rem !important;
-            }
-        }
-        
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 30px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 14px;
-            z-index: 999;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-family: sans-serif;
-        }
-        
-        .back-to-top:hover {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
         }
         
         .stApp {
             background: #f0f2f6;
         }
         
+        /* Sidebar styling */
         [data-testid="stSidebar"] {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         }
         
         [data-testid="stSidebar"] * {
+            color: white !important;
+        }
+        
+        [data-testid="stSidebar"] .stMarkdown p {
             color: white !important;
         }
 
@@ -168,6 +134,16 @@ def load_css():
             background: white;
             padding: 10px;
             border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .stRadio > div label {
+            background: #f0f2f6;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin: 0;
         }
         
         .streamlit-expanderHeader {
@@ -187,14 +163,6 @@ def load_css():
             color: white !important;
         }
         </style>
-    """, unsafe_allow_html=True)
-
-# ==================== BACK TO TOP BUTTON ====================
-def add_back_to_top_button():
-    st.markdown("""
-        <a href="#" class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
-            ↑ Back to Top
-        </a>
     """, unsafe_allow_html=True)
     
 # ==================== GLOSSARY DATA ====================
@@ -235,8 +203,6 @@ GLOSSARY = {
 }
 
 # ==================== SESSION STATE ====================
-if 'page' not in st.session_state:
-    st.session_state.page = 'welcome'
 if 'patient_data' not in st.session_state:
     st.session_state.patient_data = {}
 
@@ -298,31 +264,24 @@ DISEASE_ICONS = {
 def load_dataset():
     try:
         df = pd.read_csv('dermatology.csv')
-        
-        # Replace all '?' with NaN for all columns
         df = df.replace('?', np.nan)
         
-        # Handle Age column
         if 'Age' in df.columns:
             df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
             df['Age'].fillna(df['Age'].median(), inplace=True)
         else:
             df['Age'] = np.random.randint(1, 90, len(df))
         
-        # Handle all other columns - convert to numeric
         for col in df.columns:
             if col != 'Age' and col != 'class':
                 df[col] = pd.to_numeric(df[col], errors='coerce')
-                # Fill NaN with median of that column
                 df[col].fillna(df[col].median(), inplace=True)
         
-        # Get available clinical columns
         clinical_cols = []
         for col in CLINICAL_FEATURES.values():
             if col in df.columns:
                 clinical_cols.append(col)
         
-        # Get available histopathology columns
         histo_cols = []
         for col in HISTOPATHOLOGY_FEATURES.values():
             if col in df.columns:
@@ -330,7 +289,6 @@ def load_dataset():
         
         clinical_cols.append('Age')
         
-        # If no valid columns found, create demo data
         if len(clinical_cols) <= 1:
             return create_demo_data()
         
@@ -345,23 +303,20 @@ def create_demo_data():
     n = 366
     data = {}
     
-    # Clinical features - ensure numeric values only (0-3, and 0-1 for family_history)
     for col in CLINICAL_FEATURES.values():
         if col == 'family_history':
-            data[col] = np.random.randint(0, 2, n)  # 0 or 1 only
+            data[col] = np.random.randint(0, 2, n)
         else:
-            data[col] = np.random.randint(0, 4, n)  # 0-3 only
+            data[col] = np.random.randint(0, 4, n)
     
-    # Histopathology features - ensure numeric values only (0-3)
     for col in HISTOPATHOLOGY_FEATURES.values():
-        data[col] = np.random.randint(0, 4, n)  # 0-3 only
+        data[col] = np.random.randint(0, 4, n)
     
-    data['Age'] = np.random.randint(1, 90, n)  # 1-89 only
-    data['class'] = np.random.randint(1, 7, n)  # 1-6 only
+    data['Age'] = np.random.randint(1, 90, n)
+    data['class'] = np.random.randint(1, 7, n)
     
     df = pd.DataFrame(data)
     
-    # Ensure all columns are numeric
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
         df[col].fillna(df[col].median(), inplace=True)
@@ -377,10 +332,7 @@ def train_model():
     y = df['class']
     all_cols = clinical_cols + histo_cols
     
-    # Final check - ensure no NaN values remain
     X = df[all_cols].copy()
-    
-    # Fill any remaining NaN with 0
     X = X.fillna(0)
     y = y.fillna(1).astype(int)
     
@@ -390,10 +342,8 @@ def train_model():
     model.fit(X_scaled, y)
     return model, scaler, all_cols
     
-# ==================== CACHED MODEL METRICS ====================
 @st.cache_data
 def get_model_metrics():
-    """Calculate model performance metrics once and cache them"""
     df, clinical_cols, histo_cols = load_dataset()
     y = df['class']
     all_cols = clinical_cols + histo_cols
@@ -419,11 +369,12 @@ def get_model_metrics():
         'f1': f1_score(y_test, y_pred, average='weighted') * 100
     }
 
-# ==================== PAGES ====================
+# ==================== PAGE FUNCTIONS ====================
+
 def welcome_page():
     st.markdown("""
         <div style="text-align: center; margin-top: 2rem;">
-            <h1 style="font-size: 3.5rem;">🩺 DermaCare AI</h1>
+            <h1 style="font-size: 3rem;">🩺 DermaCare AI</h1>
             <p style="font-size: 1.2rem; color: #2a5298;">Intelligent Dermatology Diagnosis Assistant</p>
         </div>
     """, unsafe_allow_html=True)
@@ -431,69 +382,65 @@ def welcome_page():
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("### 🎯 Welcome")
-        st.markdown("AI-powered dermatological diagnosis system")
+        st.markdown("AI-powered dermatological diagnosis system for skin conditions")
         st.markdown("---")
         st.markdown("#### ✨ Features")
         st.markdown("""
-        - 🔍 Easy-to-use radio buttons
+        - 🔍 Easy-to-use selection
         - 🔬 Clinical + Microscopy analysis
         - 🎯 AI-powered predictions
+        - 📱 Mobile friendly
         """)
         st.info("💡 **Tip:** Click any **ℹ️** button next to a term for its definition!")
 
-        if st.button("🚀 Start Diagnosis", use_container_width=True):
-            st.session_state.page = 'symptoms'
-            st.rerun()
-
-def symptoms_page():
+def clinical_page():
     st.title("🩺 Clinical Assessment")
     st.markdown("---")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     with col1:
-        name = st.text_input("👤 Patient Name")
+        name = st.text_input("👤 Patient Name", placeholder="Enter patient name")
     with col2:
         age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35)
-    with col3:
-        duration = st.selectbox("⏰ Duration", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
+    
+    duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
 
     st.markdown("### 🔍 Clinical Examination")
+    st.markdown("---")
 
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
-    col1, col2, col3 = st.columns(3)
 
     for i, (display, col_name) in enumerate(items):
-        with [col1, col2, col3][i % 3]:
-            label_col, info_col = st.columns([4, 1])
-            with label_col:
-                st.markdown(f"**{display}**")
-            with info_col:
+        with st.container():
+            col_label, col_radio = st.columns([2, 3])
+            with col_label:
                 with st.popover("ℹ️"):
                     st.markdown(f"**{display}**")
                     st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+                st.markdown(f"**{display}**")
+            
+            with col_radio:
+                if display == "Family History":
+                    clinical_data[display] = st.radio(
+                        display, ["No", "Yes"], 
+                        key=f"clinical_{i}", 
+                        horizontal=True, 
+                        label_visibility="collapsed"
+                    )
+                else:
+                    clinical_data[display] = st.radio(
+                        display, ["None", "Mild", "Moderate", "Severe"], 
+                        index=0,
+                        key=f"clinical_{i}", 
+                        horizontal=True, 
+                        label_visibility="collapsed"
+                    )
+        st.markdown("---")
 
-            if display == "Family History":
-                clinical_data[display] = st.radio(
-                    display,  # Fixed: Added proper label
-                    ["No", "Yes"], 
-                    key=f"c{i}", 
-                    horizontal=True, 
-                    label_visibility="collapsed"
-                )
-            else:
-                clinical_data[display] = st.radio(
-                    display,  # Fixed: Added proper label
-                    ["None", "Mild", "Moderate", "Severe"], 
-                    index=0,
-                    key=f"c{i}", 
-                    horizontal=True, 
-                    label_visibility="collapsed"
-                )
+    notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80)
 
-    notes = st.text_area("📝 Notes", height=80)
-
-    if st.button("🔬 Proceed to Histopathology", use_container_width=True):
+    if st.button("🔬 Proceed to Histopathology", use_container_width=True, type="primary"):
         converted = {}
         for d, v in clinical_data.items():
             if d == "Family History":
@@ -503,95 +450,91 @@ def symptoms_page():
                 converted[d] = m.get(v, "None (0)")
 
         st.session_state.patient_data = {
-            'name': name or "Anonymous", 'age': age, 'duration': duration,
-            'clinical': converted, 'notes': notes, 'time': datetime.now().strftime("%Y-%m-%d %H:%M")
+            'name': name or "Anonymous", 
+            'age': age, 
+            'duration': duration,
+            'clinical': converted, 
+            'notes': notes, 
+            'time': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
-        st.session_state.page = 'histopathology'
+        st.switch_page("app.py")  # This will reload with query param
         st.rerun()
-    
-    add_back_to_top_button()
 
 def histopathology_page():
     st.title("🔬 Histopathology Analysis")
     st.markdown("---")
+
+    if not st.session_state.patient_data:
+        st.warning("Please complete the clinical assessment first.")
+        if st.button("Go to Clinical Assessment"):
+            st.rerun()
+        return
 
     st.info(f"**Patient:** {st.session_state.patient_data.get('name', 'Unknown')}")
 
     histo_data = {}
     items = list(HISTOPATHOLOGY_FEATURES.items())
 
-    def render_histo_group(group_items, key_prefix):
-        col1, col2 = st.columns(2)
-        for i, (display, col_name) in enumerate(group_items):
-            with col1 if i % 2 == 0 else col2:
-                label_col, info_col = st.columns([4, 1])
-                with label_col:
-                    st.markdown(f"**{display}**")
-                with info_col:
-                    with st.popover("ℹ️"):
+    groups = {
+        "📊 Epidermal Changes": items[:8],
+        "🔥 Inflammatory Features": items[8:16],
+        "🏥 Dermal Changes": items[16:]
+    }
+
+    for group_name, group_items in groups.items():
+        with st.expander(group_name, expanded=True):
+            for i, (display, col_name) in enumerate(group_items):
+                with st.container():
+                    col_label, col_radio = st.columns([2, 3])
+                    with col_label:
+                        with st.popover("ℹ️"):
+                            st.markdown(f"**{display}**")
+                            st.caption(GLOSSARY.get(display, "Definition coming soon..."))
                         st.markdown(f"**{display}**")
-                        st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+                    
+                    with col_radio:
+                        histo_data[display] = st.radio(
+                            display, ["None", "Mild", "Moderate", "Severe"], 
+                            index=0,
+                            key=f"histo_{group_name}_{i}", 
+                            horizontal=True, 
+                            label_visibility="collapsed"
+                        )
+                st.markdown("---")
 
-                histo_data[display] = st.radio(
-                    display,  # Fixed: Added proper label
-                    ["None", "Mild", "Moderate", "Severe"], 
-                    index=0,
-                    key=f"{key_prefix}_{i}", 
-                    horizontal=True, 
-                    label_visibility="collapsed"
-                )
+    path_notes = st.text_area("📝 Pathologist's Notes", placeholder="Any microscopic observations...", height=80)
 
-    with st.expander("📊 Epidermal Changes", expanded=True):
-        render_histo_group(items[:8], "h1")
-
-    with st.expander("🔥 Inflammatory Features", expanded=True):
-        render_histo_group(items[8:16], "h2")
-
-    with st.expander("🏥 Dermal Changes", expanded=True):
-        render_histo_group(items[16:], "h3")
-
-    path_notes = st.text_area("📝 Pathologist's Notes", height=80)
-
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("← Back to Clinical", use_container_width=True):
+            st.rerun()
     with col2:
-        if st.button("💊 Generate Diagnosis", use_container_width=True):
+        if st.button("💊 Generate Diagnosis", use_container_width=True, type="primary"):
             converted = {}
             for d, v in histo_data.items():
                 m = {"None": "None (0)", "Mild": "Mild (1)", "Moderate": "Moderate (2)", "Severe": "Severe (3)"}
                 converted[d] = m.get(v, "None (0)")
             st.session_state.patient_data['histopathology'] = converted
             st.session_state.patient_data['path_notes'] = path_notes
-            st.session_state.page = 'prediction'
             st.rerun()
 
-        if st.button("← Back", use_container_width=True):
-            st.session_state.page = 'symptoms'
-            st.rerun()
-    
-    add_back_to_top_button()
-
-def prediction_page():
+def diagnosis_page():
     st.title("📋 Diagnosis Report")
     
     data = st.session_state.patient_data
     
-    # Check if data exists
     if not data or 'clinical' not in data:
         st.error("No patient data found. Please start a new assessment.")
-        if st.button("Start New Assessment", use_container_width=True):
-            st.session_state.page = 'symptoms'
+        if st.button("Start New Assessment"):
             st.rerun()
         return
 
     with st.spinner("🧠 Analyzing patient data..."):
         try:
-            # Get the trained model
             model, scaler, features = train_model()
             
-            # Build input
             inputs = []
             
-            # 1. Clinical features (11 features)
             for display, col_name in CLINICAL_FEATURES.items():
                 val = data['clinical'].get(display, "None (0)")
                 if display == "Family History":
@@ -600,7 +543,6 @@ def prediction_page():
                     severity_map = {"None (0)": 0, "Mild (1)": 1, "Moderate (2)": 2, "Severe (3)": 3}
                     inputs.append(severity_map.get(val, 0))
             
-            # 2. Histopathology features (22 features)
             if 'histopathology' in data:
                 for display, col_name in HISTOPATHOLOGY_FEATURES.items():
                     val = data['histopathology'].get(display, "None (0)")
@@ -609,10 +551,8 @@ def prediction_page():
             else:
                 inputs.extend([0] * len(HISTOPATHOLOGY_FEATURES))
             
-            # 3. Age
             inputs.append(data['age'])
             
-            # Feature count adjustment
             expected_features = len(features)
             if len(inputs) != expected_features:
                 if len(inputs) < expected_features:
@@ -620,7 +560,6 @@ def prediction_page():
                 else:
                     inputs = inputs[:expected_features]
             
-            # Predict
             X = np.array(inputs).reshape(1, -1)
             X_scaled = scaler.transform(X)
             pred = model.predict(X_scaled)[0]
@@ -629,31 +568,26 @@ def prediction_page():
             disease = DISEASES.get(pred, "Unknown")
             confidence = probs[pred - 1] * 100
             
-            # ==================== CLEAN UI ====================
-            
-            # Main Diagnosis Card
+            # Diagnosis Card
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); 
                         border-radius: 20px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
                 <div style="font-size: 4rem;">{DISEASE_ICONS.get(disease, '🏥')}</div>
                 <div style="color: rgba(255,255,255,0.9); font-size: 1rem; letter-spacing: 2px;">PRIMARY DIAGNOSIS</div>
-                <div style="color: white; font-size: 2.5rem; font-weight: bold; margin: 0.5rem 0;">{disease}</div>
+                <div style="color: white; font-size: 2rem; font-weight: bold; margin: 0.5rem 0;">{disease}</div>
                 <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 0.5rem; display: inline-block;">
                     Confidence: {confidence:.1f}%
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-            # Two column layout for metrics
             col1, col2 = st.columns(2)
             
             with col1:
-                # Confidence Meter
                 st.markdown("### 📊 Confidence Level")
                 st.progress(int(confidence))
                 st.caption(f"{confidence:.1f}% confidence")
                 
-                # Patient Info Card
                 st.markdown("### 👤 Patient Summary")
                 st.markdown(f"""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px;">
@@ -664,7 +598,6 @@ def prediction_page():
                 """, unsafe_allow_html=True)
             
             with col2:
-                # Differential Diagnoses
                 st.markdown("### 🎯 Differential Diagnoses")
                 top = np.argsort(probs)[-4:][::-1]
                 for idx in top:
@@ -674,7 +607,6 @@ def prediction_page():
                     st.progress(int(prob))
                     st.caption(f"{prob:.1f}%")
             
-            # Positive Findings (Collapsible)
             with st.expander("🔍 Positive Clinical Findings", expanded=False):
                 findings = []
                 for s, v in data['clinical'].items():
@@ -687,7 +619,6 @@ def prediction_page():
                 else:
                     st.markdown("*No significant findings recorded*")
             
-            # Recommendations
             st.markdown("### 💡 Recommendations")
             rec_col1, rec_col2, rec_col3 = st.columns(3)
             
@@ -718,36 +649,27 @@ def prediction_page():
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Disclaimer and Actions
             st.markdown("---")
             st.caption("⚕️ **Disclaimer:** AI-assisted prediction - Please confirm with a qualified dermatologist")
             
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with col2:
-                if st.button("🔄 New Patient Assessment", use_container_width=True):
-                    for key in list(st.session_state.keys()):
-                        del st.session_state[key]
-                    st.rerun()
+            if st.button("🔄 New Patient Assessment", use_container_width=True):
+                st.session_state.patient_data = {}
+                st.rerun()
             
         except Exception as e:
             st.error(f"❌ Diagnosis Error: {str(e)}")
             st.markdown("**Possible reasons:**")
             st.markdown("- Missing patient information")
             st.markdown("- Invalid data format")
-            st.markdown("- Dataset loading issue")
             
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with col2:
-                if st.button("← Go Back", use_container_width=True):
-                    st.session_state.page = 'symptoms'
-                    st.rerun()
-    
-    add_back_to_top_button()
+            if st.button("← Go Back"):
+                st.rerun()
 
 # ==================== MAIN ====================
 def main():
     load_css()
 
+    # Sidebar navigation
     with st.sidebar:
         st.markdown("""
             <div style="text-align: center; padding: 1rem;">
@@ -759,25 +681,43 @@ def main():
 
         st.markdown("---")
         
-        # Quick Actions
-        st.markdown("### ⚡ Quick Actions")
+        st.markdown("### 🧭 Navigation")
+        
+        # Navigation buttons
         if st.button("🏠 Home", use_container_width=True):
             st.session_state.page = 'welcome'
-            st.session_state.patient_data = {}
             st.rerun()
-        if st.button("🩺 New Patient", use_container_width=True):
-            st.session_state.page = 'symptoms'
-            st.session_state.patient_data = {}
+        
+        if st.button("🩺 Clinical Assessment", use_container_width=True):
+            st.session_state.page = 'clinical'
             st.rerun()
+        
+        if st.button("🔬 Histopathology", use_container_width=True):
+            if st.session_state.patient_data and 'clinical' in st.session_state.patient_data:
+                st.session_state.page = 'histopathology'
+                st.rerun()
+            else:
+                st.warning("Please complete Clinical Assessment first")
+        
+        if st.button("📋 Diagnosis Report", use_container_width=True):
+            if st.session_state.patient_data and 'histopathology' in st.session_state.patient_data:
+                st.session_state.page = 'diagnosis'
+                st.rerun()
+            else:
+                st.warning("Please complete all assessments first")
         
         st.markdown("---")
         
         # Current Session Info
-        if st.session_state.patient_data and st.session_state.page != 'welcome':
+        if st.session_state.patient_data:
             st.markdown("### 📋 Current Session")
             st.markdown(f"**Patient:** {st.session_state.patient_data.get('name', 'N/A')}")
-            step = "Clinical" if st.session_state.page == 'symptoms' else "Biopsy" if st.session_state.page == 'histopathology' else "Report"
-            st.markdown(f"**Step:** {step}")
+            status = []
+            if 'clinical' in st.session_state.patient_data:
+                status.append("✅ Clinical")
+            if 'histopathology' in st.session_state.patient_data:
+                status.append("✅ Biopsy")
+            st.markdown(f"**Progress:** {' → '.join(status) if status else 'Not started'}")
         
         st.markdown("---")
         
@@ -801,14 +741,25 @@ def main():
         st.markdown("### 📞 Support")
         st.markdown("📧 lalzareabhishek@gmail.com")
 
+    # Page routing
+    if 'page' not in st.session_state:
+        st.session_state.page = 'welcome'
+    
     if st.session_state.page == 'welcome':
         welcome_page()
-    elif st.session_state.page == 'symptoms':
-        symptoms_page()
+        # Add start button at bottom of welcome page
+        if st.button("🚀 Start Diagnosis", use_container_width=True):
+            st.session_state.page = 'clinical'
+            st.rerun()
+            
+    elif st.session_state.page == 'clinical':
+        clinical_page()
+        
     elif st.session_state.page == 'histopathology':
         histopathology_page()
-    elif st.session_state.page == 'prediction':
-        prediction_page()
+        
+    elif st.session_state.page == 'diagnosis':
+        diagnosis_page()
 
 if __name__ == "__main__":
     main()
