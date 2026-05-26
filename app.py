@@ -106,6 +106,7 @@ def load_css():
             padding: 0rem !important;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
+            overflow-y: hidden
         }
         
         div[data-testid="stPopoverBody"] * {
