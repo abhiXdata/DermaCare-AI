@@ -135,7 +135,6 @@ def load_css():
             align-items: center !important;
             justify-content: center !important;
             cursor: pointer !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
         }
         
         [data-testid="stPopover"] button:hover {
@@ -149,7 +148,7 @@ def load_css():
             font-weight: 700 !important;
             font-size: 16px !important;
             margin: 0 !important;
-            line-height: 1 !important;
+            line-height: 0 !important;
         }
 
         div[data-testid="stPopoverBody"] {
