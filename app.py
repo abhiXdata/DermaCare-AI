@@ -580,13 +580,14 @@ def clinical_page():
             st.markdown(f'''
             <div class="feature-header">
                 <span class="feature-name">{display}</span>
+                { with st.popover("ℹ️"):
+                st.markdown(f"**{display}**")
+                st.caption(GLOSSARY.get(display, "Definition coming soon...")) }
             </div>
             ''', unsafe_allow_html=True)
             
             # Popover icon placed HERE - inside the card, right after name
-            with st.popover("ℹ️"):
-                st.markdown(f"**{display}**")
-                st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+            
             
             # Radio buttons
             if display == "Family History":
