@@ -45,7 +45,37 @@ def load_css():
                 font-size: 1.1rem !important;
             }
         }
-        
+        /* Center everything */
+.feature-wrapper {
+    text-align: center;
+    margin: 10px 0;
+}
+
+.feature-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #1e3c72;
+    display: inline-block;
+}
+
+/* Center radio buttons */
+.stRadio {
+    display: flex;
+    justify-content: center !important;
+}
+
+.stRadio > div {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 15px !important;
+    background: transparent !important;
+}
+
+.stRadio > div label {
+    background: #f0f2f6;
+    padding: 8px 20px !important;
+    border-radius: 30px !important;
+}
         .stApp {
             background: #f0f2f6;
         }
