@@ -21,6 +21,16 @@ st.set_page_config(
 def load_css():
     st.markdown("""
         <style>
+        /* Force scroll to top on page load - THIS ACTUALLY WORKS */
+        html, body, .stApp {
+            scroll-behavior: auto !important;
+        }
+        
+        /* Reset scroll position when navigating */
+        .main .block-container {
+            scroll-margin-top: 0px !important;
+        }
+        
         /* Responsive Titles - Mobile Friendly */
         @media (max-width: 768px) {
             h1 {
@@ -91,21 +101,38 @@ def load_css():
             background: rgba(255, 255, 255, 0.25) !important;
         }
 
-        /* Popover */
+        /* Popover - Position inline with name */
+        .field-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .field-header span {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        
+        [data-testid="stPopover"] {
+            display: inline-block;
+        }
+        
         [data-testid="stPopover"] button {
             background: #1e3c72 !important;
             border-radius: 50% !important;
             border: none !important;
-            min-width: 28px !important;
-            width: 28px !important;
-            height: 28px !important;
+            min-width: 24px !important;
+            width: 24px !important;
+            height: 24px !important;
             padding: 0 !important;
+            margin-left: 8px !important;
         }
         
         [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 700 !important;
-            font-size: 14px !important;
+            font-size: 12px !important;
             margin: 0 !important;
         }
 
@@ -135,6 +162,10 @@ def load_css():
         }
         
         /* Radio button styling */
+        .stRadio {
+            margin-top: 0 !important;
+        }
+        
         .stRadio > div {
             background: white;
             padding: 8px;
@@ -187,6 +218,30 @@ def load_css():
             margin: 0.5rem 0;
         }
         </style>
+        
+        <script>
+        // Force scroll to top when page loads
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        </script>
+    """, unsafe_allow_html=True)
+
+# ==================== SCROLL TO TOP HELPER ====================
+def scroll_to_top():
+    # This creates an anchor at the top and forces scroll
+    st.markdown("""
+        <div id="page-top" style="position: absolute; top: 0; left: 0;"></div>
+        <script>
+        // Multiple attempts to ensure scroll to top
+        window.scrollTo(0, 0);
+        setTimeout(function() {
+            window.scrollTo(0, 0);
+        }, 50);
+        setTimeout(function() {
+            window.scrollTo(0, 0);
+        }, 200);
+        </script>
     """, unsafe_allow_html=True)
     
 # ==================== GLOSSARY DATA ====================
@@ -398,6 +453,7 @@ def get_model_metrics():
 # ==================== PAGE FUNCTIONS ====================
 
 def welcome_page():
+    scroll_to_top()
     st.markdown("""
         <div style="text-align: center; margin-top: 2rem;">
             <h1 style="font-size: 3rem;">🩺 DermaCare AI</h1>
@@ -420,6 +476,7 @@ def welcome_page():
         st.info("💡 **Tip:** Click any **ℹ️** button next to a term for its definition!")
 
 def clinical_page():
+    scroll_to_top()
     st.title("🩺 Clinical Assessment")
     st.markdown("---")
 
@@ -441,17 +498,17 @@ def clinical_page():
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
 
-    # Display clinical features in organized rows
+    # Display clinical features with popover inline with name
     for i, (display, col_name) in enumerate(items):
         with st.container():
-            col_label, col_radio = st.columns([2, 3])
-            with col_label:
+            # Name and popover in same line
+            col1, col2 = st.columns([1, 3])
+            with col1:
                 st.markdown(f"**{display}**")
                 with st.popover("ℹ️"):
                     st.markdown(f"**{display}**")
                     st.caption(GLOSSARY.get(display, "Definition coming soon..."))
-            
-            with col_radio:
+            with col2:
                 if display == "Family History":
                     clinical_data[display] = st.radio(
                         "", ["No", "Yes"], 
@@ -494,6 +551,7 @@ def clinical_page():
             st.rerun()
 
 def histopathology_page():
+    scroll_to_top()
     st.title("🔬 Histopathology Analysis")
     st.markdown("---")
 
@@ -519,14 +577,14 @@ def histopathology_page():
         with st.expander(group_name, expanded=True):
             for i, (display, col_name) in enumerate(group_items):
                 with st.container():
-                    col_label, col_radio = st.columns([2, 3])
-                    with col_label:
+                    # Name and popover in same line
+                    col1, col2 = st.columns([1, 3])
+                    with col1:
                         st.markdown(f"**{display}**")
                         with st.popover("ℹ️"):
                             st.markdown(f"**{display}**")
                             st.caption(GLOSSARY.get(display, "Definition coming soon..."))
-                    
-                    with col_radio:
+                    with col2:
                         histo_data[display] = st.radio(
                             "", ["None", "Mild", "Moderate", "Severe"], 
                             index=0,
@@ -555,6 +613,7 @@ def histopathology_page():
             st.rerun()
 
 def diagnosis_page():
+    scroll_to_top()
     st.title("📋 Diagnosis Report")
     
     data = st.session_state.patient_data
