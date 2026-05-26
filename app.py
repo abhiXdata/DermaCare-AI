@@ -184,7 +184,7 @@ def load_css():
             color: white !important;
         }
         
-        /* Mobile responsive */
+        /* Mobile responsive - MAKE RADIO BUTTONS SHORTER */
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8rem !important;
@@ -197,22 +197,41 @@ def load_css():
             }
             
             .feature-card {
-                padding: 15px;
+                padding: 12px;
             }
             
             .stRadio > div {
-                padding: 10px !important;
-                gap: 8px !important;
+                padding: 8px !important;
+                gap: 6px !important;
             }
             
+            /* Make radio buttons shorter on mobile */
             .stRadio > div label {
-                padding: 4px 12px !important;
-                font-size: 0.75rem !important;
+                padding: 4px 10px !important;
+                font-size: 0.7rem !important;
+                white-space: nowrap !important;
+            }
+            
+            /* Popover button smaller on mobile */
+            [data-testid="stPopover"] button {
+                width: 36px !important;
+                height: 36px !important;
+            }
+            
+            [data-testid="stPopover"] button p {
+                font-size: 12px !important;
+            }
+        }
+        
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .stRadio > div label {
+                padding: 3px 8px !important;
+                font-size: 0.65rem !important;
             }
         }
         </style>
     """, unsafe_allow_html=True)
-
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
     "Skin Redness": "🩸 Skin looks red because blood vessels expand - like a mild sunburn",
@@ -439,7 +458,6 @@ def welcome_page():
         - 🔍 Easy-to-use selection
         - 🔬 Clinical + Microscopy analysis
         - 🎯 AI-powered predictions
-        - 📱 Mobile friendly
         """)
         st.info("💡 **Tip:** Click any **ℹ️** button next to a term for its definition!")
 
