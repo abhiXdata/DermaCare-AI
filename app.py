@@ -21,6 +21,101 @@ st.set_page_config(
 def load_css():
     st.markdown("""
         <style>
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            /* Adjust main container padding */
+            .main .block-container {
+                padding: 1rem !important;
+                padding-top: 1.5rem !important;
+            }
+            
+            /* Make text smaller on mobile */
+            h1 {
+                font-size: 1.8rem !important;
+            }
+            h2 {
+                font-size: 1.4rem !important;
+            }
+            h3 {
+                font-size: 1.2rem !important;
+            }
+            p, li, label, .stMarkdown {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Make buttons full width on mobile */
+            .stButton button {
+                width: 100% !important;
+                font-size: 0.9rem !important;
+                padding: 0.5rem !important;
+            }
+            
+            /* Adjust radio buttons for mobile */
+            .stRadio > div {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+            .stRadio > div label {
+                margin-right: 0 !important;
+                padding: 0.3rem !important;
+            }
+            
+            /* Make columns stack on mobile */
+            .row-widget.stHorizontal {
+                flex-wrap: wrap !important;
+            }
+            
+            /* Adjust expander headers */
+            .streamlit-expanderHeader {
+                font-size: 0.9rem !important;
+                padding: 0.5rem !important;
+            }
+            
+            /* Make diagnosis card text smaller */
+            .diagnosis-card {
+                padding: 1rem !important;
+            }
+            .diagnosis-card div[style*="font-size: 2.5rem"] {
+                font-size: 1.8rem !important;
+            }
+            
+            /* Adjust number input */
+            .stNumberInput input {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Adjust text area */
+            .stTextArea textarea {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Make info popover more mobile-friendly */
+            div[data-testid="stPopoverBody"] {
+                max-width: 90vw !important;
+                min-width: auto !important;
+            }
+        }
+        
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .main .block-container {
+                padding: 0.75rem !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .stRadio > div {
+                gap: 0.3rem !important;
+            }
+            
+            .stRadio > div label {
+                font-size: 0.8rem !important;
+                padding: 0.2rem 0.4rem !important;
+            }
+        }
+        
         .stApp {
             background: #f0f2f6;
         }
@@ -32,29 +127,29 @@ def load_css():
         }
 
         /* ── MAKE EXPANDER TEXT WHITE ── */
-.streamlit-expanderHeader {
-    color: white !important;
-    background: white !important;
-}
-.streamlit-expanderHeader p {
-    color: white !important;
-}
-.streamlit-expanderHeader:hover {
-    background: white !important;
-}
+        .streamlit-expanderHeader {
+            color: white !important;
+            background: white !important;
+        }
+        .streamlit-expanderHeader p {
+            color: white !important;
+        }
+        .streamlit-expanderHeader:hover {
+            background: white !important;
+        }
 
-/* Expander content background */
-.streamlit-expanderContent {
-    background: white !important;
-    color:white
-}
+        /* Expander content background */
+        .streamlit-expanderContent {
+            background: white !important;
+            color: white;
+        }
 
-/* Expander content text color */
-.streamlit-expanderContent p,
-.streamlit-expanderContent div,
-.streamlit-expanderContent span {
-    color: white !important;
-}
+        /* Expander content text color */
+        .streamlit-expanderContent p,
+        .streamlit-expanderContent div,
+        .streamlit-expanderContent span {
+            color: white !important;
+        }
 
         /* ── Buttons only – scoped tightly so it doesn't bleed ── */
         [data-testid="stBaseButton-secondary"],
@@ -400,9 +495,9 @@ def get_model_metrics():
 # ==================== PAGES ====================
 def welcome_page():
     st.markdown("""
-        <div style="text-align: center; margin-top: 2rem;">
-            <h1 style="font-size: 3.5rem;">🩺 DermaCare AI</h1>
-            <p style="font-size: 1.2rem; color: #2a5298;">Intelligent Dermatology Diagnosis Assistant</p>
+        <div style="text-align: center; margin-top: 1rem;">
+            <h1 style="font-size: 2.5rem;">🩺 DermaCare AI</h1>
+            <p style="font-size: 1rem; color: #2a5298;">Intelligent Dermatology Diagnosis Assistant</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -427,6 +522,7 @@ def symptoms_page():
     st.title("🩺 Clinical Assessment")
     st.markdown("---")
 
+    # Stack columns on mobile
     col1, col2, col3 = st.columns(3)
     with col1:
         name = st.text_input("👤 Patient Name")
@@ -439,6 +535,8 @@ def symptoms_page():
 
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
+    
+    # Use responsive columns
     col1, col2, col3 = st.columns(3)
 
     for i, (display, col_name) in enumerate(items):
@@ -489,9 +587,9 @@ def histopathology_page():
     items = list(HISTOPATHOLOGY_FEATURES.items())
 
     def render_histo_group(group_items, key_prefix):
-        col1, col2 = st.columns(2)
-        for i, (display, col_name) in enumerate(group_items):
-            with col1 if i % 2 == 0 else col2:
+        # For mobile, use single column
+        if st.markdown("<!-- mobile-friendly -->", unsafe_allow_html=True):
+            for i, (display, col_name) in enumerate(group_items):
                 label_col, info_col = st.columns([4, 1])
                 with label_col:
                     st.markdown(f"**{display}**")
@@ -504,6 +602,7 @@ def histopathology_page():
                     "", ["None", "Mild", "Moderate", "Severe"], index=0,
                     key=f"{key_prefix}_{i}", horizontal=True, label_visibility="collapsed"
                 )
+                st.markdown("---")  # Add separator for mobile
 
     with st.expander("📊 Epidermal Changes", expanded=True):
         render_histo_group(items[:8], "h1")
@@ -593,20 +692,20 @@ def prediction_page():
             
             # ==================== CLEAN UI ====================
             
-            # Main Diagnosis Card
+            # Main Diagnosis Card - Responsive
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); 
-                        border-radius: 20px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
-                <div style="font-size: 4rem;">{DISEASE_ICONS.get(disease, '🏥')}</div>
-                <div style="color: rgba(255,255,255,0.9); font-size: 1rem; letter-spacing: 2px;">PRIMARY DIAGNOSIS</div>
-                <div style="color: white; font-size: 2.5rem; font-weight: bold; margin: 0.5rem 0;">{disease}</div>
+                        border-radius: 20px; padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;">
+                <div style="font-size: 3rem;">{DISEASE_ICONS.get(disease, '🏥')}</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; letter-spacing: 2px;">PRIMARY DIAGNOSIS</div>
+                <div style="color: white; font-size: 1.8rem; font-weight: bold; margin: 0.5rem 0;">{disease}</div>
                 <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 0.5rem; display: inline-block;">
                     Confidence: {confidence:.1f}%
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-            # Two column layout for metrics
+            # Stack columns on mobile
             col1, col2 = st.columns(2)
             
             with col1:
@@ -615,7 +714,7 @@ def prediction_page():
                 st.progress(int(confidence))
                 st.caption(f"{confidence:.1f}% confidence")
                 
-                # Patient Info Card - BLACK TEXT FIXED
+                # Patient Info Card
                 st.markdown("### 👤 Patient Summary")
                 st.markdown(f"""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; color: #1e3c72;">
@@ -649,34 +748,34 @@ def prediction_page():
                 else:
                     st.markdown("*No significant findings recorded*")
             
-            # Recommendations - BLACK TEXT FIXED
+            # Recommendations - Responsive stacking
             st.markdown("### 💡 Recommendations")
             rec_col1, rec_col2, rec_col3 = st.columns(3)
             
             with rec_col1:
                 st.markdown("""
-                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 2rem;">📅</div>
-                    <b style="color: #1e3c72;">Follow-up</b><br>
-                    <small style="color: #2c3e50;">Schedule in 2-4 weeks</small>
+                <div style="background: #e8f0fe; padding: 0.8rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 1.5rem;">📅</div>
+                    <b style="color: #1e3c72; font-size: 0.9rem;">Follow-up</b><br>
+                    <small style="color: #2c3e50; font-size: 0.75rem;">Schedule in 2-4 weeks</small>
                 </div>
                 """, unsafe_allow_html=True)
             
             with rec_col2:
                 st.markdown("""
-                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 2rem;">🔬</div>
-                    <b style="color: #1e3c72;">Additional Tests</b><br>
-                    <small style="color: #2c3e50;">Consider if indicated</small>
+                <div style="background: #e8f0fe; padding: 0.8rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 1.5rem;">🔬</div>
+                    <b style="color: #1e3c72; font-size: 0.9rem;">Additional Tests</b><br>
+                    <small style="color: #2c3e50; font-size: 0.75rem;">Consider if indicated</small>
                 </div>
                 """, unsafe_allow_html=True)
             
             with rec_col3:
                 st.markdown("""
-                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 2rem;">💊</div>
-                    <b style="color: #1e3c72;">Treatment</b><br>
-                    <small style="color: #2c3e50;">Initiate appropriate therapy</small>
+                <div style="background: #e8f0fe; padding: 0.8rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 1.5rem;">💊</div>
+                    <b style="color: #1e3c72; font-size: 0.9rem;">Treatment</b><br>
+                    <small style="color: #2c3e50; font-size: 0.75rem;">Initiate appropriate therapy</small>
                 </div>
                 """, unsafe_allow_html=True)
             
@@ -703,6 +802,7 @@ def prediction_page():
                 if st.button("← Go Back", use_container_width=True):
                     st.session_state.page = 'symptoms'
                     st.rerun()
+
 # ==================== MAIN ====================
 def main():
     load_css()
@@ -710,9 +810,9 @@ def main():
     with st.sidebar:
         st.markdown("""
             <div style="text-align: center; padding: 1rem;">
-                <div style="font-size: 3rem;">🩺</div>
-                <h3 style="color: white;">DermaCare AI</h3>
-                <p style="color: rgba(255,255,255,0.9);">Version 2.0</p>
+                <div style="font-size: 2.5rem;">🩺</div>
+                <h3 style="color: white; font-size: 1.2rem;">DermaCare AI</h3>
+                <p style="color: rgba(255,255,255,0.9); font-size: 0.8rem;">Version 2.0</p>
             </div>
         """, unsafe_allow_html=True)
 
@@ -740,7 +840,7 @@ def main():
         
         st.markdown("---")
         
-        # Model Performance - USING CACHED METRICS (NO REDUNDANCY)
+        # Model Performance - USING CACHED METRICS
         st.markdown("### 🎯 Model Performance")
         try:
             metrics = get_model_metrics()
@@ -771,3 +871,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
