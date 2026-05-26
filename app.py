@@ -80,10 +80,10 @@ def load_css():
         /* Popover button styling */
         [data-testid="stPopover"] button {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
-            border-radius: 40% !important;
+            border-radius: 35% !important;
             border: none !important;
             width: 50px !important;
-            height: 50px !important;
+            height: 40px !important;
             padding: 0 !important;
             min-width: 32px !important;
             display: inline-flex !important;
