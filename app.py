@@ -146,7 +146,7 @@ def load_css():
         [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 600 !important;
-            font-size: 12px !important;
+            font-size: 18px !important;
             margin: 0 !important;
             line-height: 0 !important;
         }
@@ -158,6 +158,8 @@ def load_css():
             padding: 0rem !important;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
+            overflow-x: hidden;
+            scrollbar-width: none;
         }
         
         div[data-testid="stPopoverBody"] * {
