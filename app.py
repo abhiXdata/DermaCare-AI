@@ -32,6 +32,15 @@ def load_css():
             h3 {
                 font-size: 1.2rem !important;
             }
+            .stMarkdown h1 {
+                font-size: 1.8rem !important;
+            }
+            .stMarkdown h2 {
+                font-size: 1.4rem !important;
+            }
+            .stMarkdown h3 {
+                font-size: 1.2rem !important;
+            }
         }
         
         @media (max-width: 480px) {
@@ -42,6 +51,15 @@ def load_css():
                 font-size: 1.2rem !important;
             }
             h3 {
+                font-size: 1.1rem !important;
+            }
+            .stMarkdown h1 {
+                font-size: 1.5rem !important;
+            }
+            .stMarkdown h2 {
+                font-size: 1.2rem !important;
+            }
+            .stMarkdown h3 {
                 font-size: 1.1rem !important;
             }
         }
@@ -60,6 +78,7 @@ def load_css():
             font-size: 14px;
             z-index: 999;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: sans-serif;
         }
         
         .back-to-top:hover {
@@ -177,7 +196,7 @@ def add_back_to_top_button():
             ↑ Back to Top
         </a>
     """, unsafe_allow_html=True)
-
+    
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
     "Skin Redness": "🩸 Skin looks red because blood vessels expand - like a mild sunburn",
@@ -279,24 +298,31 @@ DISEASE_ICONS = {
 def load_dataset():
     try:
         df = pd.read_csv('dermatology.csv')
+        
+        # Replace all '?' with NaN for all columns
         df = df.replace('?', np.nan)
         
+        # Handle Age column
         if 'Age' in df.columns:
             df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
             df['Age'].fillna(df['Age'].median(), inplace=True)
         else:
             df['Age'] = np.random.randint(1, 90, len(df))
         
+        # Handle all other columns - convert to numeric
         for col in df.columns:
             if col != 'Age' and col != 'class':
                 df[col] = pd.to_numeric(df[col], errors='coerce')
+                # Fill NaN with median of that column
                 df[col].fillna(df[col].median(), inplace=True)
         
+        # Get available clinical columns
         clinical_cols = []
         for col in CLINICAL_FEATURES.values():
             if col in df.columns:
                 clinical_cols.append(col)
         
+        # Get available histopathology columns
         histo_cols = []
         for col in HISTOPATHOLOGY_FEATURES.values():
             if col in df.columns:
@@ -304,6 +330,7 @@ def load_dataset():
         
         clinical_cols.append('Age')
         
+        # If no valid columns found, create demo data
         if len(clinical_cols) <= 1:
             return create_demo_data()
         
@@ -318,20 +345,23 @@ def create_demo_data():
     n = 366
     data = {}
     
+    # Clinical features - ensure numeric values only (0-3, and 0-1 for family_history)
     for col in CLINICAL_FEATURES.values():
         if col == 'family_history':
-            data[col] = np.random.randint(0, 2, n)
+            data[col] = np.random.randint(0, 2, n)  # 0 or 1 only
         else:
-            data[col] = np.random.randint(0, 4, n)
+            data[col] = np.random.randint(0, 4, n)  # 0-3 only
     
+    # Histopathology features - ensure numeric values only (0-3)
     for col in HISTOPATHOLOGY_FEATURES.values():
-        data[col] = np.random.randint(0, 4, n)
+        data[col] = np.random.randint(0, 4, n)  # 0-3 only
     
-    data['Age'] = np.random.randint(1, 90, n)
-    data['class'] = np.random.randint(1, 7, n)
+    data['Age'] = np.random.randint(1, 90, n)  # 1-89 only
+    data['class'] = np.random.randint(1, 7, n)  # 1-6 only
     
     df = pd.DataFrame(data)
     
+    # Ensure all columns are numeric
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
         df[col].fillna(df[col].median(), inplace=True)
@@ -347,7 +377,10 @@ def train_model():
     y = df['class']
     all_cols = clinical_cols + histo_cols
     
+    # Final check - ensure no NaN values remain
     X = df[all_cols].copy()
+    
+    # Fill any remaining NaN with 0
     X = X.fillna(0)
     y = y.fillna(1).astype(int)
     
@@ -357,8 +390,10 @@ def train_model():
     model.fit(X_scaled, y)
     return model, scaler, all_cols
     
+# ==================== CACHED MODEL METRICS ====================
 @st.cache_data
 def get_model_metrics():
+    """Calculate model performance metrics once and cache them"""
     df, clinical_cols, histo_cols = load_dataset()
     y = df['class']
     all_cols = clinical_cols + histo_cols
@@ -440,12 +475,20 @@ def symptoms_page():
 
             if display == "Family History":
                 clinical_data[display] = st.radio(
-                    "", ["No", "Yes"], key=f"c{i}", horizontal=True, label_visibility="collapsed"
+                    display,  # Fixed: Added proper label
+                    ["No", "Yes"], 
+                    key=f"c{i}", 
+                    horizontal=True, 
+                    label_visibility="collapsed"
                 )
             else:
                 clinical_data[display] = st.radio(
-                    "", ["None", "Mild", "Moderate", "Severe"], index=0,
-                    key=f"c{i}", horizontal=True, label_visibility="collapsed"
+                    display,  # Fixed: Added proper label
+                    ["None", "Mild", "Moderate", "Severe"], 
+                    index=0,
+                    key=f"c{i}", 
+                    horizontal=True, 
+                    label_visibility="collapsed"
                 )
 
     notes = st.text_area("📝 Notes", height=80)
@@ -490,8 +533,12 @@ def histopathology_page():
                         st.caption(GLOSSARY.get(display, "Definition coming soon..."))
 
                 histo_data[display] = st.radio(
-                    "", ["None", "Mild", "Moderate", "Severe"], index=0,
-                    key=f"{key_prefix}_{i}", horizontal=True, label_visibility="collapsed"
+                    display,  # Fixed: Added proper label
+                    ["None", "Mild", "Moderate", "Severe"], 
+                    index=0,
+                    key=f"{key_prefix}_{i}", 
+                    horizontal=True, 
+                    label_visibility="collapsed"
                 )
 
     with st.expander("📊 Epidermal Changes", expanded=True):
@@ -528,6 +575,7 @@ def prediction_page():
     
     data = st.session_state.patient_data
     
+    # Check if data exists
     if not data or 'clinical' not in data:
         st.error("No patient data found. Please start a new assessment.")
         if st.button("Start New Assessment", use_container_width=True):
@@ -537,10 +585,13 @@ def prediction_page():
 
     with st.spinner("🧠 Analyzing patient data..."):
         try:
+            # Get the trained model
             model, scaler, features = train_model()
             
+            # Build input
             inputs = []
             
+            # 1. Clinical features (11 features)
             for display, col_name in CLINICAL_FEATURES.items():
                 val = data['clinical'].get(display, "None (0)")
                 if display == "Family History":
@@ -549,6 +600,7 @@ def prediction_page():
                     severity_map = {"None (0)": 0, "Mild (1)": 1, "Moderate (2)": 2, "Severe (3)": 3}
                     inputs.append(severity_map.get(val, 0))
             
+            # 2. Histopathology features (22 features)
             if 'histopathology' in data:
                 for display, col_name in HISTOPATHOLOGY_FEATURES.items():
                     val = data['histopathology'].get(display, "None (0)")
@@ -557,8 +609,10 @@ def prediction_page():
             else:
                 inputs.extend([0] * len(HISTOPATHOLOGY_FEATURES))
             
+            # 3. Age
             inputs.append(data['age'])
             
+            # Feature count adjustment
             expected_features = len(features)
             if len(inputs) != expected_features:
                 if len(inputs) < expected_features:
@@ -566,6 +620,7 @@ def prediction_page():
                 else:
                     inputs = inputs[:expected_features]
             
+            # Predict
             X = np.array(inputs).reshape(1, -1)
             X_scaled = scaler.transform(X)
             pred = model.predict(X_scaled)[0]
@@ -574,6 +629,9 @@ def prediction_page():
             disease = DISEASES.get(pred, "Unknown")
             confidence = probs[pred - 1] * 100
             
+            # ==================== CLEAN UI ====================
+            
+            # Main Diagnosis Card
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); 
                         border-radius: 20px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
@@ -586,13 +644,16 @@ def prediction_page():
             </div>
             """, unsafe_allow_html=True)
             
+            # Two column layout for metrics
             col1, col2 = st.columns(2)
             
             with col1:
+                # Confidence Meter
                 st.markdown("### 📊 Confidence Level")
                 st.progress(int(confidence))
                 st.caption(f"{confidence:.1f}% confidence")
                 
+                # Patient Info Card
                 st.markdown("### 👤 Patient Summary")
                 st.markdown(f"""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px;">
@@ -603,6 +664,7 @@ def prediction_page():
                 """, unsafe_allow_html=True)
             
             with col2:
+                # Differential Diagnoses
                 st.markdown("### 🎯 Differential Diagnoses")
                 top = np.argsort(probs)[-4:][::-1]
                 for idx in top:
@@ -612,6 +674,7 @@ def prediction_page():
                     st.progress(int(prob))
                     st.caption(f"{prob:.1f}%")
             
+            # Positive Findings (Collapsible)
             with st.expander("🔍 Positive Clinical Findings", expanded=False):
                 findings = []
                 for s, v in data['clinical'].items():
@@ -624,6 +687,7 @@ def prediction_page():
                 else:
                     st.markdown("*No significant findings recorded*")
             
+            # Recommendations
             st.markdown("### 💡 Recommendations")
             rec_col1, rec_col2, rec_col3 = st.columns(3)
             
@@ -654,6 +718,7 @@ def prediction_page():
                 </div>
                 """, unsafe_allow_html=True)
             
+            # Disclaimer and Actions
             st.markdown("---")
             st.caption("⚕️ **Disclaimer:** AI-assisted prediction - Please confirm with a qualified dermatologist")
             
@@ -694,6 +759,7 @@ def main():
 
         st.markdown("---")
         
+        # Quick Actions
         st.markdown("### ⚡ Quick Actions")
         if st.button("🏠 Home", use_container_width=True):
             st.session_state.page = 'welcome'
@@ -706,6 +772,7 @@ def main():
         
         st.markdown("---")
         
+        # Current Session Info
         if st.session_state.patient_data and st.session_state.page != 'welcome':
             st.markdown("### 📋 Current Session")
             st.markdown(f"**Patient:** {st.session_state.patient_data.get('name', 'N/A')}")
@@ -714,6 +781,7 @@ def main():
         
         st.markdown("---")
         
+        # Model Performance
         st.markdown("### 🎯 Model Performance")
         try:
             metrics = get_model_metrics()
@@ -729,6 +797,7 @@ def main():
         
         st.markdown("---")
         
+        # Support
         st.markdown("### 📞 Support")
         st.markdown("📧 lalzareabhishek@gmail.com")
 
