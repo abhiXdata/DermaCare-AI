@@ -659,7 +659,7 @@ def diagnosis_page():
                 
                 st.markdown("### 👤 Patient Summary")
                 st.markdown(f"""
-                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px;">
+                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; color: black">
                     <b style="color: black">📛 Name:</b> {data['name']}<br>
                     <b style="color: black">🎂 Age:</b> {data['age']} years<br>
                     <b style="color: black">⏰ Duration:</b> {data['duration']}
