@@ -156,7 +156,7 @@ def load_css():
             min-width: 280px !important;
             max-width: 350px !important;
             border-radius: 12px !important;
-            padding: 1rem !important;
+            padding: 0rem !important;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
         }
