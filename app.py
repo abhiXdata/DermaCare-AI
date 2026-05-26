@@ -21,51 +21,6 @@ st.set_page_config(
 def load_css():
     st.markdown("""
         <style>
-        # Add this CSS to your load_css() function inside the <style> tags:
-        /* Force page to scroll to top on every navigation */
-        .stApp {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-        
-        /* Reset scroll position when new content loads */
-        .stApp::before {
-            content: '';
-            display: block;
-            height: 0;
-            width: 100%;
-        }
-        
-        /* Ensure main content area scrolls properly */
-        .main {
-            overflow-y: auto;
-            scroll-behavior: auto;
-        }
-        
-        /* Mobile-specific scroll fix */
-        @media (max-width: 768px) {
-            .stApp {
-                position: relative;
-                overflow-y: auto;
-            }
-            
-            /* Force scroll to top on navigation */
-            .main .block-container {
-                padding-top: 0 !important;
-                margin-top: -60px !important;
-            }
-            
-            /* Add top padding to first element to prevent cutoff */
-            .main .block-container > :first-child {
-                margin-top: 60px !important;
-            }
-        }
-
         /* Responsive Titles - Mobile Friendly */
         @media (max-width: 768px) {
             h1 {
@@ -77,45 +32,8 @@ def load_css():
             h3 {
                 font-size: 1.2rem !important;
             }
-            .stMarkdown h1 {
-                font-size: 1.8rem !important;
-            }
-            .stMarkdown h2 {
-                font-size: 1.4rem !important;
-            }
-            .stMarkdown h3 {
-                font-size: 1.2rem !important;
-            }
-        }
-        /* CRITICAL: Force scroll to top on page navigation */
-        .stApp {
-            overflow-y: auto !important;
-            scroll-behavior: auto !important;
         }
         
-        /* Reset scroll position when navigating */
-        .stApp .main .block-container {
-            scroll-margin-top: 0 !important;
-        }
-        
-        /* Mobile-specific fix - THIS ACTUALLY WORKS */
-        @media (max-width: 768px) {
-            /* Force the app to forget scroll position */
-            .stApp {
-                position: static !important;
-            }
-            
-            /* Create a hidden anchor at the very top */
-            .stApp::before {
-                content: "";
-                display: block;
-                height: 1px;
-                width: 100%;
-                position: absolute;
-                top: 0;
-                left: 0;
-                visibility: hidden;
-            }
         @media (max-width: 480px) {
             h1 {
                 font-size: 1.5rem !important;
@@ -126,59 +44,48 @@ def load_css():
             h3 {
                 font-size: 1.1rem !important;
             }
-            .stMarkdown h1 {
-                font-size: 1.5rem !important;
-            }
-            .stMarkdown h2 {
-                font-size: 1.2rem !important;
-            }
-            .stMarkdown h3 {
-                font-size: 1.1rem !important;
-            }
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .back-to-top:hover {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
         }
         
         .stApp {
             background: #f0f2f6;
         }
+        
         [data-testid="stSidebar"] {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         }
+        
         [data-testid="stSidebar"] * {
             color: white !important;
         }
 
-        /* ── MAKE EXPANDER TEXT WHITE ── */
-.streamlit-expanderHeader {
-    color: white !important;
-    background: white !important;
-}
-.streamlit-expanderHeader p {
-    color: white !important;
-}
-.streamlit-expanderHeader:hover {
-    background: white !important;
-}
-
-/* Expander content background */
-.streamlit-expanderContent {
-    background: white !important;
-    color:white
-}
-
-/* Expander content text color */
-.streamlit-expanderContent p,
-.streamlit-expanderContent div,
-.streamlit-expanderContent span {
-    color: white !important;
-}
-
-        /* ── Buttons only – scoped tightly so it doesn't bleed ── */
+        /* Buttons */
         [data-testid="stBaseButton-secondary"],
         [data-testid="stBaseButton-primary"] {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             border: none !important;
             border-radius: 8px !important;
         }
+        
         [data-testid="stBaseButton-secondary"] p,
         [data-testid="stBaseButton-primary"] p,
         [data-testid="stBaseButton-secondary"] span,
@@ -187,19 +94,19 @@ def load_css():
             font-weight: 600 !important;
         }
 
-        /* ── SIDEBAR BUTTONS - Make them visible on blue background ── */
+        /* Sidebar Buttons */
         [data-testid="stSidebar"] .stButton button {
             background: rgba(255, 255, 255, 0.15) !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
             color: white !important;
             width: 100% !important;
         }
+        
         [data-testid="stSidebar"] .stButton button:hover {
             background: rgba(255, 255, 255, 0.25) !important;
-            border: 1px solid rgba(255, 255, 255, 0.5) !important;
         }
 
-        /* ── Popover trigger button (the ℹ️ pill) ── */
+        /* Popover */
         [data-testid="stPopover"] button {
             background: #1e3c72 !important;
             border-radius: 8px !important;
@@ -207,53 +114,20 @@ def load_css():
             min-width: 40px !important;
             padding: 5px 10px !important;
         }
+        
         [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 700 !important;
         }
 
-        /* ── Popover dialog box - SIZE & STRUCTURE ONLY, COLORS UNCHANGED ── */
         div[data-testid="stPopoverBody"] {
             min-width: 280px !important;
             max-width: 350px !important;
-            width: auto !important;
             border-radius: 12px !important;
             padding: 1.25rem !important;
-            color: white !important;
         }
 
-        /* Content spacing inside popover */
-        div[data-testid="stPopoverBody"] > div {
-            display: flex !important;
-            color: white !important;
-            flex-direction: column !important;
-            gap: 0.75rem !important;
-        }
-
-        /* Title text spacing */
-        div[data-testid="stPopoverBody"] p:first-of-type {
-            margin-bottom: 0.5rem !important;
-            font-size: 1rem !important;
-            color: white !important;
-        }
-
-        /* Description text spacing */
-        div[data-testid="stPopoverBody"] .stCaptionContainer p {
-            margin-bottom: 0 !important;
-            line-height: 1.4 !important;
-        }
-
-        /* NO CHANGES to wrapper - keeping original */
-        div[data-baseweb="popover"] > div {
-            padding: 0 !important;
-        }
-
-        /* Popover arrow - NO COLOR CHANGES */
-        div[data-baseweb="popover"] svg {
-            stroke: none !important;
-        }
-
-        /* ── Fix text area / notes ── */
+        /* Form Elements */
         textarea,
         [data-testid="stTextArea"] textarea,
         [data-testid="stTextInput"] input {
@@ -266,18 +140,22 @@ def load_css():
         h1, h2, h3, h4, h5, h6 {
             color: #1e3c72 !important;
         }
+        
         p, li, label {
             color: #2c3e50 !important;
         }
+        
         .stRadio > div {
             background: white;
             padding: 10px;
             border-radius: 8px;
         }
+        
         .streamlit-expanderHeader {
             background: #e8f0fe;
             color: #1e3c72 !important;
         }
+        
         .diagnosis-card {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             padding: 2rem;
@@ -285,48 +163,21 @@ def load_css():
             text-align: center;
             margin: 1rem 0;
         }
+        
         .diagnosis-card * {
             color: white !important;
         }
         </style>
     """, unsafe_allow_html=True)
 
-# ==================== SCROLL TO TOP ON PAGE CHANGE ====================
-# Replace your existing scroll_to_top function with this:
-def scroll_to_top():
-    # This creates an invisible anchor at the top of the page
-    # and uses CSS to ensure the page scrolls to it
+# ==================== BACK TO TOP BUTTON ====================
+def add_back_to_top_button():
     st.markdown("""
-        <style>
-            /* Force scroll to top on page load */
-            .main > div:first-child {
-                scroll-margin-top: 0;
-            }
-            
-            /* Create an invisible target at the very top */
-            #scroll-top-anchor {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 1px;
-                height: 1px;
-                visibility: hidden;
-            }
-        </style>
-        <div id="scroll-top-anchor"></div>
+        <a href="#" class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+            ↑ Back to Top
+        </a>
     """, unsafe_allow_html=True)
-    
-    # Use a session state variable to trigger scroll on first render
-    if 'scrolled' not in st.session_state:
-        st.session_state.scrolled = True
-        # Add a small empty element that forces focus to top
-        st.markdown("""
-            <div style="height: 0; overflow: visible;">
-                <a href="#scroll-top-anchor" style="display: none;">top</a>
-            </div>
-        """, unsafe_allow_html=True)
-        
-    
+
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
     "Skin Redness": "🩸 Skin looks red because blood vessels expand - like a mild sunburn",
@@ -428,31 +279,24 @@ DISEASE_ICONS = {
 def load_dataset():
     try:
         df = pd.read_csv('dermatology.csv')
-        
-        # Replace all '?' with NaN for all columns
         df = df.replace('?', np.nan)
         
-        # Handle Age column
         if 'Age' in df.columns:
             df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
             df['Age'].fillna(df['Age'].median(), inplace=True)
         else:
             df['Age'] = np.random.randint(1, 90, len(df))
         
-        # Handle all other columns - convert to numeric
         for col in df.columns:
             if col != 'Age' and col != 'class':
                 df[col] = pd.to_numeric(df[col], errors='coerce')
-                # Fill NaN with median of that column
                 df[col].fillna(df[col].median(), inplace=True)
         
-        # Get available clinical columns
         clinical_cols = []
         for col in CLINICAL_FEATURES.values():
             if col in df.columns:
                 clinical_cols.append(col)
         
-        # Get available histopathology columns
         histo_cols = []
         for col in HISTOPATHOLOGY_FEATURES.values():
             if col in df.columns:
@@ -460,7 +304,6 @@ def load_dataset():
         
         clinical_cols.append('Age')
         
-        # If no valid columns found, create demo data
         if len(clinical_cols) <= 1:
             return create_demo_data()
         
@@ -475,23 +318,20 @@ def create_demo_data():
     n = 366
     data = {}
     
-    # Clinical features - ensure numeric values only (0-3, and 0-1 for family_history)
     for col in CLINICAL_FEATURES.values():
         if col == 'family_history':
-            data[col] = np.random.randint(0, 2, n)  # 0 or 1 only
+            data[col] = np.random.randint(0, 2, n)
         else:
-            data[col] = np.random.randint(0, 4, n)  # 0-3 only
+            data[col] = np.random.randint(0, 4, n)
     
-    # Histopathology features - ensure numeric values only (0-3)
     for col in HISTOPATHOLOGY_FEATURES.values():
-        data[col] = np.random.randint(0, 4, n)  # 0-3 only
+        data[col] = np.random.randint(0, 4, n)
     
-    data['Age'] = np.random.randint(1, 90, n)  # 1-89 only
-    data['class'] = np.random.randint(1, 7, n)  # 1-6 only
+    data['Age'] = np.random.randint(1, 90, n)
+    data['class'] = np.random.randint(1, 7, n)
     
     df = pd.DataFrame(data)
     
-    # Ensure all columns are numeric
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
         df[col].fillna(df[col].median(), inplace=True)
@@ -507,10 +347,7 @@ def train_model():
     y = df['class']
     all_cols = clinical_cols + histo_cols
     
-    # Final check - ensure no NaN values remain
     X = df[all_cols].copy()
-    
-    # Fill any remaining NaN with 0
     X = X.fillna(0)
     y = y.fillna(1).astype(int)
     
@@ -520,10 +357,8 @@ def train_model():
     model.fit(X_scaled, y)
     return model, scaler, all_cols
     
-# ==================== CACHED MODEL METRICS (REDUNDANCY REMOVED) ====================
 @st.cache_data
 def get_model_metrics():
-    """Calculate model performance metrics once and cache them"""
     df, clinical_cols, histo_cols = load_dataset()
     y = df['class']
     all_cols = clinical_cols + histo_cols
@@ -576,7 +411,6 @@ def welcome_page():
             st.rerun()
 
 def symptoms_page():
-    scroll_to_top()
     st.title("🩺 Clinical Assessment")
     st.markdown("---")
 
@@ -631,9 +465,10 @@ def symptoms_page():
         }
         st.session_state.page = 'histopathology'
         st.rerun()
+    
+    add_back_to_top_button()
 
 def histopathology_page():
-    scroll_to_top()
     st.title("🔬 Histopathology Analysis")
     st.markdown("---")
 
@@ -685,14 +520,14 @@ def histopathology_page():
         if st.button("← Back", use_container_width=True):
             st.session_state.page = 'symptoms'
             st.rerun()
+    
+    add_back_to_top_button()
 
 def prediction_page():
-    scroll_to_top()
     st.title("📋 Diagnosis Report")
     
     data = st.session_state.patient_data
     
-    # Check if data exists
     if not data or 'clinical' not in data:
         st.error("No patient data found. Please start a new assessment.")
         if st.button("Start New Assessment", use_container_width=True):
@@ -702,13 +537,10 @@ def prediction_page():
 
     with st.spinner("🧠 Analyzing patient data..."):
         try:
-            # Get the trained model
             model, scaler, features = train_model()
             
-            # Build input
             inputs = []
             
-            # 1. Clinical features (11 features)
             for display, col_name in CLINICAL_FEATURES.items():
                 val = data['clinical'].get(display, "None (0)")
                 if display == "Family History":
@@ -717,7 +549,6 @@ def prediction_page():
                     severity_map = {"None (0)": 0, "Mild (1)": 1, "Moderate (2)": 2, "Severe (3)": 3}
                     inputs.append(severity_map.get(val, 0))
             
-            # 2. Histopathology features (22 features)
             if 'histopathology' in data:
                 for display, col_name in HISTOPATHOLOGY_FEATURES.items():
                     val = data['histopathology'].get(display, "None (0)")
@@ -726,10 +557,8 @@ def prediction_page():
             else:
                 inputs.extend([0] * len(HISTOPATHOLOGY_FEATURES))
             
-            # 3. Age
             inputs.append(data['age'])
             
-            # Feature count adjustment
             expected_features = len(features)
             if len(inputs) != expected_features:
                 if len(inputs) < expected_features:
@@ -737,7 +566,6 @@ def prediction_page():
                 else:
                     inputs = inputs[:expected_features]
             
-            # Predict
             X = np.array(inputs).reshape(1, -1)
             X_scaled = scaler.transform(X)
             pred = model.predict(X_scaled)[0]
@@ -746,9 +574,6 @@ def prediction_page():
             disease = DISEASES.get(pred, "Unknown")
             confidence = probs[pred - 1] * 100
             
-            # ==================== CLEAN UI ====================
-            
-            # Main Diagnosis Card
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); 
                         border-radius: 20px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
@@ -761,27 +586,23 @@ def prediction_page():
             </div>
             """, unsafe_allow_html=True)
             
-            # Two column layout for metrics
             col1, col2 = st.columns(2)
             
             with col1:
-                # Confidence Meter
                 st.markdown("### 📊 Confidence Level")
                 st.progress(int(confidence))
                 st.caption(f"{confidence:.1f}% confidence")
                 
-                # Patient Info Card - BLACK TEXT FIXED
                 st.markdown("### 👤 Patient Summary")
                 st.markdown(f"""
-                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; color: #1e3c72;">
-                    <b style="color: #1e3c72;">📛 Name:</b> <span style="color: #2c3e50;">{data['name']}</span><br>
-                    <b style="color: #1e3c72;">🎂 Age:</b> <span style="color: #2c3e50;">{data['age']} years</span><br>
-                    <b style="color: #1e3c72;">⏰ Duration:</b> <span style="color: #2c3e50;">{data['duration']}</span>
+                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px;">
+                    <b>📛 Name:</b> {data['name']}<br>
+                    <b>🎂 Age:</b> {data['age']} years<br>
+                    <b>⏰ Duration:</b> {data['duration']}
                 </div>
                 """, unsafe_allow_html=True)
             
             with col2:
-                # Differential Diagnoses
                 st.markdown("### 🎯 Differential Diagnoses")
                 top = np.argsort(probs)[-4:][::-1]
                 for idx in top:
@@ -791,7 +612,6 @@ def prediction_page():
                     st.progress(int(prob))
                     st.caption(f"{prob:.1f}%")
             
-            # Positive Findings (Collapsible)
             with st.expander("🔍 Positive Clinical Findings", expanded=False):
                 findings = []
                 for s, v in data['clinical'].items():
@@ -804,7 +624,6 @@ def prediction_page():
                 else:
                     st.markdown("*No significant findings recorded*")
             
-            # Recommendations - BLACK TEXT FIXED
             st.markdown("### 💡 Recommendations")
             rec_col1, rec_col2, rec_col3 = st.columns(3)
             
@@ -812,8 +631,8 @@ def prediction_page():
                 st.markdown("""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
                     <div style="font-size: 2rem;">📅</div>
-                    <b style="color: #1e3c72;">Follow-up</b><br>
-                    <small style="color: #2c3e50;">Schedule in 2-4 weeks</small>
+                    <b>Follow-up</b><br>
+                    <small>Schedule in 2-4 weeks</small>
                 </div>
                 """, unsafe_allow_html=True)
             
@@ -821,8 +640,8 @@ def prediction_page():
                 st.markdown("""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
                     <div style="font-size: 2rem;">🔬</div>
-                    <b style="color: #1e3c72;">Additional Tests</b><br>
-                    <small style="color: #2c3e50;">Consider if indicated</small>
+                    <b>Additional Tests</b><br>
+                    <small>Consider if indicated</small>
                 </div>
                 """, unsafe_allow_html=True)
             
@@ -830,12 +649,11 @@ def prediction_page():
                 st.markdown("""
                 <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
                     <div style="font-size: 2rem;">💊</div>
-                    <b style="color: #1e3c72;">Treatment</b><br>
-                    <small style="color: #2c3e50;">Initiate appropriate therapy</small>
+                    <b>Treatment</b><br>
+                    <small>Initiate appropriate therapy</small>
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Disclaimer and Actions
             st.markdown("---")
             st.caption("⚕️ **Disclaimer:** AI-assisted prediction - Please confirm with a qualified dermatologist")
             
@@ -858,6 +676,9 @@ def prediction_page():
                 if st.button("← Go Back", use_container_width=True):
                     st.session_state.page = 'symptoms'
                     st.rerun()
+    
+    add_back_to_top_button()
+
 # ==================== MAIN ====================
 def main():
     load_css()
@@ -873,7 +694,6 @@ def main():
 
         st.markdown("---")
         
-        # Quick Actions
         st.markdown("### ⚡ Quick Actions")
         if st.button("🏠 Home", use_container_width=True):
             st.session_state.page = 'welcome'
@@ -886,7 +706,6 @@ def main():
         
         st.markdown("---")
         
-        # Current Session Info
         if st.session_state.patient_data and st.session_state.page != 'welcome':
             st.markdown("### 📋 Current Session")
             st.markdown(f"**Patient:** {st.session_state.patient_data.get('name', 'N/A')}")
@@ -895,7 +714,6 @@ def main():
         
         st.markdown("---")
         
-        # Model Performance - USING CACHED METRICS (NO REDUNDANCY)
         st.markdown("### 🎯 Model Performance")
         try:
             metrics = get_model_metrics()
@@ -911,7 +729,6 @@ def main():
         
         st.markdown("---")
         
-        # Support
         st.markdown("### 📞 Support")
         st.markdown("📧 lalzareabhishek@gmail.com")
 
