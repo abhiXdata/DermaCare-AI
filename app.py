@@ -495,44 +495,30 @@ def welcome_page():
 
 def clinical_page():
     st.title("🩺 Clinical Assessment")
-    st.markdown("---")
-
-    # Patient Information
-    with st.container():
-        st.markdown("### 📋 Patient Information")
-        col1, col2 = st.columns(2)
-        with col1:
-            name = st.text_input("👤 Patient Name", placeholder="Enter patient name")
-        with col2:
-            age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35)
-        duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
-
-    st.markdown("---")
-    st.markdown("### 🔍 Clinical Examination")
-    st.markdown("*Rate each symptom based on severity*")
-
+    
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
 
-    # Display clinical features with popover inline with name
     for i, (display, col_name) in enumerate(items):
         with st.container():
-            # Create two columns: one for label+popover, one for radio buttons
-            col1, col2 = st.columns([1, 2])
-            
-            with col1:
-                # Display feature name and popover inline
+            # Center everything using columns
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                # Centered feature name with popover
                 st.markdown(f"""
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-weight: 600; color: #1e3c72;">{display}</span>
+                <div style="text-align: center;">
+                    <span style="font-weight: 600; font-size: 1.1rem; color: #1e3c72;">{display}</span>
                 </div>
                 """, unsafe_allow_html=True)
-                # Add popover button right next to the name
-                with st.popover("ℹ️"):
-                    st.markdown(f"**{display}**")
-                    st.caption(GLOSSARY.get(display, "Definition coming soon..."))
-            
-            with col2:
+                
+                # Popover icon centered as well
+                col_icon, col_icon2, col_icon3 = st.columns([1, 1, 1])
+                with col_icon2:
+                    with st.popover("ℹ️"):
+                        st.markdown(f"**{display}**")
+                        st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+                
+                # Centered radio buttons
                 if display == "Family History":
                     clinical_data[display] = st.radio(
                         "", ["No", "Yes"], 
@@ -548,32 +534,9 @@ def clinical_page():
                         horizontal=True, 
                         label_visibility="collapsed"
                     )
+        
         st.markdown("---")
-
-    notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80)
-
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("🔬 Proceed to Histopathology", use_container_width=True, type="primary"):
-            converted = {}
-            for d, v in clinical_data.items():
-                if d == "Family History":
-                    converted[d] = v
-                else:
-                    m = {"None": "None (0)", "Mild": "Mild (1)", "Moderate": "Moderate (2)", "Severe": "Severe (3)"}
-                    converted[d] = m.get(v, "None (0)")
-
-            st.session_state.patient_data = {
-                'name': name or "Anonymous", 
-                'age': age, 
-                'duration': duration,
-                'clinical': converted, 
-                'notes': notes, 
-                'time': datetime.now().strftime("%Y-%m-%d %H:%M")
-            }
-            st.session_state.page = 'histopathology'
-            st.rerun()
-
+        
 def histopathology_page():
     st.title("🔬 Histopathology Analysis")
     st.markdown("---")
