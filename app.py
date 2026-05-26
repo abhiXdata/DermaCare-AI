@@ -126,15 +126,6 @@ def load_css():
             color: #2c3e50 !important;
         }
         
-        /* Feature row styling */
-        .feature-row {
-            margin-bottom: 20px;
-            padding: 10px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
         /* Radio button styling */
         .stRadio {
             margin-top: 0 !important;
@@ -187,6 +178,8 @@ def load_css():
 # ==================== SESSION STATE ====================
 if 'patient_data' not in st.session_state:
     st.session_state.patient_data = {}
+if 'page' not in st.session_state:
+    st.session_state.page = 'welcome'
 
 # ==================== PAGE FUNCTIONS ====================
 def welcome_page():
@@ -220,10 +213,10 @@ def clinical_page():
         st.markdown("### 📋 Patient Information")
         col1, col2 = st.columns(2)
         with col1:
-            name = st.text_input("👤 Patient Name", placeholder="Enter patient name")
+            name = st.text_input("👤 Patient Name", placeholder="Enter patient name", key="patient_name")
         with col2:
-            age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35)
-        duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
+            age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35, key="patient_age")
+        duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"], key="duration")
 
     st.markdown("---")
     st.markdown("### 🔍 Clinical Examination")
@@ -260,7 +253,7 @@ def clinical_page():
                 )
         st.markdown("---")
 
-    notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80)
+    notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80, key="clinical_notes")
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -281,7 +274,8 @@ def clinical_page():
                 'notes': notes, 
                 'time': datetime.now().strftime("%Y-%m-%d %H:%M")
             }
-            st.switch_page("pages/histopathology.py")
+            st.session_state.page = 'histopathology'
+            st.rerun()
 
 def diagnosis_page():
     st.title("📋 Diagnosis Report")
@@ -291,7 +285,9 @@ def diagnosis_page():
     if not data or 'clinical' not in data:
         st.error("No patient data found. Please start a new assessment.")
         if st.button("Start New Assessment", use_container_width=True):
-            st.switch_page("app.py")
+            st.session_state.page = 'welcome'
+            st.session_state.patient_data = {}
+            st.rerun()
         return
 
     with st.spinner("🧠 Analyzing patient data..."):
@@ -419,7 +415,8 @@ def diagnosis_page():
             
             if st.button("🔄 New Patient Assessment", use_container_width=True):
                 st.session_state.patient_data = {}
-                st.switch_page("app.py")
+                st.session_state.page = 'welcome'
+                st.rerun()
             
         except Exception as e:
             st.error(f"❌ Diagnosis Error: {str(e)}")
@@ -446,20 +443,24 @@ def main():
         st.markdown("### 🧭 Navigation")
         
         if st.button("🏠 Home", use_container_width=True):
-            st.switch_page("app.py")
+            st.session_state.page = 'welcome'
+            st.rerun()
         
         if st.button("🩺 Clinical Assessment", use_container_width=True):
-            st.switch_page("app.py")
+            st.session_state.page = 'clinical'
+            st.rerun()
         
         if st.button("🔬 Histopathology", use_container_width=True):
             if st.session_state.patient_data and 'clinical' in st.session_state.patient_data:
-                st.switch_page("pages/histopathology.py")
+                st.session_state.page = 'histopathology'
+                st.rerun()
             else:
                 st.warning("⚠️ Please complete Clinical Assessment first")
         
         if st.button("📋 Diagnosis Report", use_container_width=True):
             if st.session_state.patient_data and 'histopathology' in st.session_state.patient_data:
-                st.switch_page("pages/diagnosis.py")
+                st.session_state.page = 'diagnosis'
+                st.rerun()
             else:
                 st.warning("⚠️ Please complete all assessments first")
         
@@ -497,15 +498,73 @@ def main():
         st.markdown("### 📞 Support")
         st.markdown("📧 lalzareabhishek@gmail.com")
 
-    # Page routing
-    query_params = st.query_params
-    page = query_params.get("page", ["welcome"])[0]
-    
-    if page == "welcome":
+    # Page routing using session state
+    if st.session_state.page == 'welcome':
         welcome_page()
         if st.button("🚀 Start Diagnosis", use_container_width=True):
-            st.switch_page("app.py")
-    elif page == "diagnosis":
+            st.session_state.page = 'clinical'
+            st.rerun()
+    elif st.session_state.page == 'clinical':
+        clinical_page()
+    elif st.session_state.page == 'histopathology':
+        # For histopathology, we need to show that page content
+        st.title("🔬 Histopathology Analysis")
+        st.markdown("---")
+        
+        if not st.session_state.patient_data or 'clinical' not in st.session_state.patient_data:
+            st.warning("⚠️ Please complete the clinical assessment first.")
+            if st.button("← Go to Clinical Assessment", use_container_width=True):
+                st.session_state.page = 'clinical'
+                st.rerun()
+        else:
+            st.info(f"**Patient:** {st.session_state.patient_data.get('name', 'Unknown')}")
+
+            histo_data = {}
+            items = list(HISTOPATHOLOGY_FEATURES.items())
+
+            groups = {
+                "📊 Epidermal Changes": items[:8],
+                "🔥 Inflammatory Features": items[8:16],
+                "🏥 Dermal Changes": items[16:]
+            }
+
+            for group_name, group_items in groups.items():
+                with st.expander(group_name, expanded=True):
+                    for i, (display, col_name) in enumerate(group_items):
+                        col1, col2 = st.columns([1, 3])
+                        with col1:
+                            st.markdown(f"**{display}**")
+                            with st.popover("ℹ️"):
+                                st.markdown(f"**{display}**")
+                                st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+                        with col2:
+                            histo_data[display] = st.radio(
+                                "", ["None", "Mild", "Moderate", "Severe"], 
+                                index=0,
+                                key=f"histo_{group_name}_{i}", 
+                                horizontal=True, 
+                                label_visibility="collapsed"
+                            )
+                        st.markdown("---")
+
+            path_notes = st.text_area("📝 Pathologist's Notes", placeholder="Any microscopic observations...", height=80)
+
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("← Back to Clinical", use_container_width=True):
+                    st.session_state.page = 'clinical'
+                    st.rerun()
+            with col2:
+                if st.button("💊 Generate Diagnosis", use_container_width=True, type="primary"):
+                    converted = {}
+                    for d, v in histo_data.items():
+                        m = {"None": "None (0)", "Mild": "Mild (1)", "Moderate": "Moderate (2)", "Severe": "Severe (3)"}
+                        converted[d] = m.get(v, "None (0)")
+                    st.session_state.patient_data['histopathology'] = converted
+                    st.session_state.patient_data['path_notes'] = path_notes
+                    st.session_state.page = 'diagnosis'
+                    st.rerun()
+    elif st.session_state.page == 'diagnosis':
         diagnosis_page()
 
 if __name__ == "__main__":
