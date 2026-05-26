@@ -466,9 +466,6 @@ def clinical_page():
     # Display clinical features
     for i, (display, col_name) in enumerate(items):
         with st.container():
-            # Create a card-like container
-            st.markdown(f'<div class="feature-card">', unsafe_allow_html=True)
-            
             # Feature name with popover
             col_label, col_pop = st.columns([6, 1])
             with col_label:
@@ -546,8 +543,6 @@ def histopathology_page():
         with st.expander(group_name, expanded=True):
             for i, (display, col_name) in enumerate(group_items):
                 with st.container():
-                    st.markdown(f'<div class="feature-card">', unsafe_allow_html=True)
-                    
                     # Feature name with popover
                     col_label, col_pop = st.columns([6, 1])
                     with col_label:
