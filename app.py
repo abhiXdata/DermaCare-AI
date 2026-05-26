@@ -91,31 +91,110 @@ def load_css():
             background: rgba(255, 255, 255, 0.25) !important;
         }
 
-        /* Popover */
+        /* Feature row styling */
+        .feature-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .feature-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .feature-name {
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 1rem;
+        }
+        
+        /* Popover styling - BETTER SIZE AND POSITION */
+        [data-testid="stPopover"] {
+            display: inline-flex;
+            align-items: center;
+        }
+        
         [data-testid="stPopover"] button {
-            background: #1e3c72 !important;
-            border-radius: 50% !important;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+            border-radius: 20px !important;
             border: none !important;
-            width: 28px !important;
-            height: 28px !important;
+            min-width: 32px !important;
+            width: 32px !important;
+            height: 32px !important;
             padding: 0 !important;
-            margin-left: 8px !important;
+            margin: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+        
+        [data-testid="stPopover"] button:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
+            transform: scale(1.05);
+            transition: transform 0.2s;
         }
         
         [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 700 !important;
-            font-size: 14px !important;
+            font-size: 16px !important;
             margin: 0 !important;
+            line-height: 1 !important;
         }
 
         div[data-testid="stPopoverBody"] {
-            min-width: 260px !important;
-            max-width: 300px !important;
+            min-width: 280px !important;
+            max-width: 350px !important;
             border-radius: 12px !important;
             padding: 1rem !important;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+            color: white !important;
+        }
+        
+        div[data-testid="stPopoverBody"] * {
+            color: white !important;
         }
 
+        /* Radio button styling */
+        .stRadio {
+            margin-top: 0 !important;
+            flex: 2;
+        }
+        
+        .stRadio > div {
+            background: transparent;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-start;
+        }
+        
+        .stRadio > div label {
+            background: #f0f2f6;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            margin: 0;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .stRadio > div label:hover {
+            background: #e0e4e8;
+            transform: translateY(-1px);
+        }
+        
         /* Form Elements */
         textarea,
         [data-testid="stTextArea"] textarea,
@@ -132,47 +211,6 @@ def load_css():
         
         p, li, label {
             color: #2c3e50 !important;
-        }
-        
-        /* Feature row styling - CLEAN AND ORGANIZED */
-        .feature-row {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .feature-name {
-            font-weight: 600;
-            color: #1e3c72;
-            margin-bottom: 10px;
-        }
-        
-        /* Radio button styling */
-        .stRadio {
-            margin-top: 0 !important;
-        }
-        
-        .stRadio > div {
-            background: transparent;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        
-        .stRadio > div label {
-            background: #f0f2f6;
-            padding: 0.4rem 1rem;
-            border-radius: 25px;
-            margin: 0;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-        
-        .stRadio > div label:hover {
-            background: #e0e4e8;
         }
         
         .streamlit-expanderHeader {
@@ -197,17 +235,29 @@ def load_css():
             margin: 0.5rem 0;
         }
         
-        .section-header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin: 20px 0 15px 0;
+        /* Container for each feature */
+        .feature-container {
+            margin-bottom: 15px;
         }
         
-        .section-header h3 {
-            color: white !important;
-            margin: 0;
+        @media (max-width: 768px) {
+            .feature-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .feature-label {
+                width: 100%;
+            }
+            
+            .stRadio {
+                width: 100%;
+            }
+            
+            .stRadio > div {
+                justify-content: center;
+            }
         }
         </style>
     """, unsafe_allow_html=True)
@@ -463,16 +513,24 @@ def clinical_page():
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
 
-    # Display clinical features - CLEAN AND ORGANIZED
+    # Display clinical features with popover inline with name
     for i, (display, col_name) in enumerate(items):
         with st.container():
-            # Feature name with popover
-            col1, col2 = st.columns([2, 3])
+            # Create two columns: one for label+popover, one for radio buttons
+            col1, col2 = st.columns([1, 2])
+            
             with col1:
-                st.markdown(f"**{display}**")
+                # Display feature name and popover inline
+                st.markdown(f"""
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-weight: 600; color: #1e3c72;">{display}</span>
+                </div>
+                """, unsafe_allow_html=True)
+                # Add popover button right next to the name
                 with st.popover("ℹ️"):
                     st.markdown(f"**{display}**")
                     st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+            
             with col2:
                 if display == "Family History":
                     clinical_data[display] = st.radio(
@@ -537,17 +595,24 @@ def histopathology_page():
         "🏥 Dermal Changes": items[16:]
     }
 
-    # Display histopathology features - CLEAN AND ORGANIZED
+    # Display histopathology features with popover inline with name
     for group_name, group_items in groups.items():
         with st.expander(group_name, expanded=True):
             for i, (display, col_name) in enumerate(group_items):
                 with st.container():
-                    col1, col2 = st.columns([2, 3])
+                    col1, col2 = st.columns([1, 2])
+                    
                     with col1:
-                        st.markdown(f"**{display}**")
+                        # Display feature name and popover inline
+                        st.markdown(f"""
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight: 600; color: #1e3c72;">{display}</span>
+                        </div>
+                        """, unsafe_allow_html=True)
                         with st.popover("ℹ️"):
                             st.markdown(f"**{display}**")
                             st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+                    
                     with col2:
                         histo_data[display] = st.radio(
                             "", ["None", "Mild", "Moderate", "Severe"], 
