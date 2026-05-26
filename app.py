@@ -126,9 +126,9 @@ def load_css():
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             border-radius: 20px !important;
             border: none !important;
-            min-width: 32px !important;
-            width: 32px !important;
-            height: 32px !important;
+            min-width: 50px !important;
+            width: 50px !important;
+            height: 50px !important;
             padding: 0 !important;
             margin: 0 !important;
             display: inline-flex !important;
