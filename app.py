@@ -1,15 +1,6 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-import warnings
-from datetime import datetime
-warnings.filterwarnings('ignore')
+from common import *
 
-# ==================== PAGE CONFIG ====================
 st.set_page_config(
     page_title="DermaCare AI - Dermatology Diagnosis",
     page_icon="🩺",
@@ -21,16 +12,6 @@ st.set_page_config(
 def load_css():
     st.markdown("""
         <style>
-        /* Force scroll to top on page load - THIS ACTUALLY WORKS */
-        html, body, .stApp {
-            scroll-behavior: auto !important;
-        }
-        
-        /* Reset scroll position when navigating */
-        .main .block-container {
-            scroll-margin-top: 0px !important;
-        }
-        
         /* Responsive Titles - Mobile Friendly */
         @media (max-width: 768px) {
             h1 {
@@ -101,30 +82,14 @@ def load_css():
             background: rgba(255, 255, 255, 0.25) !important;
         }
 
-        /* Popover - Position inline with name */
-        .field-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .field-header span {
-            font-weight: 600;
-            color: #1e3c72;
-        }
-        
-        [data-testid="stPopover"] {
-            display: inline-block;
-        }
-        
+        /* Popover */
         [data-testid="stPopover"] button {
             background: #1e3c72 !important;
             border-radius: 50% !important;
             border: none !important;
-            min-width: 24px !important;
-            width: 24px !important;
-            height: 24px !important;
+            min-width: 28px !important;
+            width: 28px !important;
+            height: 28px !important;
             padding: 0 !important;
             margin-left: 8px !important;
         }
@@ -132,7 +97,7 @@ def load_css():
         [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 700 !important;
-            font-size: 12px !important;
+            font-size: 14px !important;
             margin: 0 !important;
         }
 
@@ -161,15 +126,23 @@ def load_css():
             color: #2c3e50 !important;
         }
         
+        /* Feature row styling */
+        .feature-row {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
         /* Radio button styling */
         .stRadio {
             margin-top: 0 !important;
         }
         
         .stRadio > div {
-            background: white;
-            padding: 8px;
-            border-radius: 8px;
+            background: transparent;
+            padding: 0;
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
@@ -205,255 +178,18 @@ def load_css():
             color: white !important;
         }
         
-        /* Field container styling */
-        .field-container {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
         hr {
-            margin: 0.5rem 0;
+            margin: 1rem 0;
         }
         </style>
-        
-        <script>
-        // Force scroll to top when page loads
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-        </script>
     """, unsafe_allow_html=True)
-
-# ==================== SCROLL TO TOP HELPER ====================
-def scroll_to_top():
-    # This creates an anchor at the top and forces scroll
-    st.markdown("""
-        <div id="page-top" style="position: absolute; top: 0; left: 0;"></div>
-        <script>
-        // Multiple attempts to ensure scroll to top
-        window.scrollTo(0, 0);
-        setTimeout(function() {
-            window.scrollTo(0, 0);
-        }, 50);
-        setTimeout(function() {
-            window.scrollTo(0, 0);
-        }, 200);
-        </script>
-    """, unsafe_allow_html=True)
-    
-# ==================== GLOSSARY DATA ====================
-GLOSSARY = {
-    "Skin Redness": "🩸 Skin looks red because blood vessels expand - like a mild sunburn",
-    "Skin Scaling": "❄️ Dry skin that flakes off like dandruff",
-    "Definite Borders": "🗺️ You can clearly see where the rash starts and ends",
-    "Itching": "🤚 Feeling that makes you want to scratch your skin",
-    "Koebner Phenomenon": "✨ New rash appears exactly where skin was injured",
-    "Polygonal Papules": "📐 Small raised bumps with straight edges",
-    "Follicular Papules": "⚫ Small bumps around hair roots",
-    "Oral Mucosal Involvement": "👄 Rash or sores inside the mouth",
-    "Knee/Elbow Involvement": "🦵 Rash specifically on the knees or elbows",
-    "Scalp Involvement": "💇 Rash on the head where hair grows",
-    "Family History": "👨‍👩‍👧 Blood relatives had similar skin problems",
-    "Melanin incontinence": "🎨 Skin pigment leaks out from damaged cells",
-    "Eosinophils in infiltrate": "🦠 Allergy cells gather in the skin",
-    "PNL infiltrate": "⚔️ Germ-fighting cells rush into the skin",
-    "Fibrosis of papillary dermis": "🔧 Small scars form in top skin layer",
-    "Exocytosis": "🏃 Fighting cells move into outer skin layer",
-    "Acanthosis": "📏 Skin's middle layer gets thicker",
-    "Hyperkeratosis": "🛡️ Outer skin layer gets too thick like a callus",
-    "Parakeratosis": "🔬 Skin cells don't mature properly",
-    "Clubbing of rete ridges": "👊 Finger-like projections become rounded",
-    "Elongation of rete ridges": "📈 Skin projections grow longer",
-    "Thinning of suprapapillary epidermis": "🥚 Skin becomes very thin above bumps",
-    "Spongiform pustule": "💧 Pimple-like pockets of pus form",
-    "Munro microabscess": "🔬 Tiny collections of fighting cells",
-    "Focal hypergranulosis": "📍 Some spots of grain layer get thicker",
-    "Disappearance of granular layer": "👻 Grain layer vanishes in some areas",
-    "Vacuolisation of basal layer": "🫧 Bottom cells form empty bubbles",
-    "Spongiosis": "💦 Skin cells swell with extra fluid",
-    "Saw-tooth appearance": "🪚 Bottom of skin looks jagged like a saw",
-    "Follicular horn plug": "🚫 Hair hole gets blocked with dead cells",
-    "Perifollicular parakeratosis": "🌀 Immature cells surround hair holes",
-    "Inflammatory mononuclear infiltrate": "⏰ Long-term fighting cells gather",
-    "Band-like infiltrate": "🎗️ Fighting cells line up like a ribbon"
-}
 
 # ==================== SESSION STATE ====================
 if 'patient_data' not in st.session_state:
     st.session_state.patient_data = {}
-if 'page' not in st.session_state:
-    st.session_state.page = 'welcome'
-
-# ==================== DATASET ====================
-CLINICAL_FEATURES = {
-    "Skin Redness": "erythema",
-    "Skin Scaling": "scaling",
-    "Definite Borders": "definite_borders",
-    "Itching": "itching",
-    "Koebner Phenomenon": "koebner_phenomenon",
-    "Polygonal Papules": "polygonal_papules",
-    "Follicular Papules": "follicular_papules",
-    "Oral Mucosal Involvement": "oral_mucosal_involvement",
-    "Knee/Elbow Involvement": "knee_and_elbow_involvement",
-    "Scalp Involvement": "scalp_involvement",
-    "Family History": "family_history"
-}
-
-HISTOPATHOLOGY_FEATURES = {
-    "Melanin incontinence": "melanin_incontinence",
-    "Eosinophils in infiltrate": "eosinophils_in_the_infiltrate",
-    "PNL infiltrate": "pnl_infiltrate",
-    "Fibrosis of papillary dermis": "fibrosis_of_the_papillary_dermis",
-    "Exocytosis": "exocytosis",
-    "Acanthosis": "acanthosis",
-    "Hyperkeratosis": "hyperkeratosis",
-    "Parakeratosis": "parakeratosis",
-    "Clubbing of rete ridges": "clubbing_of_the_rete_ridges",
-    "Elongation of rete ridges": "elongation_of_the_rete_ridges",
-    "Thinning of suprapapillary epidermis": "thinning_of_the_suprapapillary_epidermis",
-    "Spongiform pustule": "spongiform_pustule",
-    "Munro microabscess": "munro_microabcess",
-    "Focal hypergranulosis": "focal_hypergranulosis",
-    "Disappearance of granular layer": "disappearance_of_the_granular_layer",
-    "Vacuolisation of basal layer": "vacuolisation_and_damage_of_basal_layer",
-    "Spongiosis": "spongiosis",
-    "Saw-tooth appearance": "saw_tooth_appearance_of_retes",
-    "Follicular horn plug": "follicular_horn_plug",
-    "Perifollicular parakeratosis": "perifollicular_parakeratosis",
-    "Inflammatory mononuclear infiltrate": "inflammatory_monoluclear_inflitrate",
-    "Band-like infiltrate": "band_like_infiltrate"
-}
-
-SEVERITY = {"None (0)": 0, "Mild (1)": 1, "Moderate (2)": 2, "Severe (3)": 3}
-YES_NO = {"No": 0, "Yes": 1}
-
-DISEASES = {
-    1: "Psoriasis", 2: "Seborrheic Dermatitis", 3: "Lichen Planus",
-    4: "Pityriasis Rosea", 5: "Chronic Dermatitis", 6: "Pityriasis Rubra Pilaris"
-}
-
-DISEASE_ICONS = {
-    "Psoriasis": "🟡", "Seborrheic Dermatitis": "🟠", "Lichen Planus": "🟣",
-    "Pityriasis Rosea": "🔴", "Chronic Dermatitis": "🟢", "Pityriasis Rubra Pilaris": "🔵"
-}
-
-# ==================== LOAD DATASET ====================
-@st.cache_resource
-def load_dataset():
-    try:
-        df = pd.read_csv('dermatology.csv')
-        df = df.replace('?', np.nan)
-        
-        if 'Age' in df.columns:
-            df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
-            df['Age'].fillna(df['Age'].median(), inplace=True)
-        else:
-            df['Age'] = np.random.randint(1, 90, len(df))
-        
-        for col in df.columns:
-            if col != 'Age' and col != 'class':
-                df[col] = pd.to_numeric(df[col], errors='coerce')
-                df[col].fillna(df[col].median(), inplace=True)
-        
-        clinical_cols = []
-        for col in CLINICAL_FEATURES.values():
-            if col in df.columns:
-                clinical_cols.append(col)
-        
-        histo_cols = []
-        for col in HISTOPATHOLOGY_FEATURES.values():
-            if col in df.columns:
-                histo_cols.append(col)
-        
-        clinical_cols.append('Age')
-        
-        if len(clinical_cols) <= 1:
-            return create_demo_data()
-        
-        return df, clinical_cols, histo_cols
-        
-    except Exception as e:
-        st.error(f"Error loading dataset: {str(e)}")
-        return create_demo_data()
-        
-def create_demo_data():
-    np.random.seed(42)
-    n = 366
-    data = {}
-    
-    for col in CLINICAL_FEATURES.values():
-        if col == 'family_history':
-            data[col] = np.random.randint(0, 2, n)
-        else:
-            data[col] = np.random.randint(0, 4, n)
-    
-    for col in HISTOPATHOLOGY_FEATURES.values():
-        data[col] = np.random.randint(0, 4, n)
-    
-    data['Age'] = np.random.randint(1, 90, n)
-    data['class'] = np.random.randint(1, 7, n)
-    
-    df = pd.DataFrame(data)
-    
-    for col in df.columns:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-        df[col].fillna(df[col].median(), inplace=True)
-    
-    clinical_cols = list(CLINICAL_FEATURES.values()) + ['Age']
-    histo_cols = list(HISTOPATHOLOGY_FEATURES.values())
-    
-    return df, clinical_cols, histo_cols
-    
-@st.cache_resource
-def train_model():
-    df, clinical_cols, histo_cols = load_dataset()
-    y = df['class']
-    all_cols = clinical_cols + histo_cols
-    
-    X = df[all_cols].copy()
-    X = X.fillna(0)
-    y = y.fillna(1).astype(int)
-    
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    model = RandomForestClassifier(random_state=42, n_estimators=100)
-    model.fit(X_scaled, y)
-    return model, scaler, all_cols
-    
-@st.cache_data
-def get_model_metrics():
-    df, clinical_cols, histo_cols = load_dataset()
-    y = df['class']
-    all_cols = clinical_cols + histo_cols
-    
-    X = df[all_cols]
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
-    
-    scaler_test = StandardScaler()
-    X_train_scaled = scaler_test.fit_transform(X_train)
-    X_test_scaled = scaler_test.transform(X_test)
-    
-    test_model = RandomForestClassifier(random_state=42, n_estimators=100)
-    test_model.fit(X_train_scaled, y_train)
-    
-    y_pred = test_model.predict(X_test_scaled)
-    
-    return {
-        'accuracy': accuracy_score(y_test, y_pred) * 100,
-        'precision': precision_score(y_test, y_pred, average='weighted') * 100,
-        'recall': recall_score(y_test, y_pred, average='weighted') * 100,
-        'f1': f1_score(y_test, y_pred, average='weighted') * 100
-    }
 
 # ==================== PAGE FUNCTIONS ====================
-
 def welcome_page():
-    scroll_to_top()
     st.markdown("""
         <div style="text-align: center; margin-top: 2rem;">
             <h1 style="font-size: 3rem;">🩺 DermaCare AI</h1>
@@ -476,7 +212,6 @@ def welcome_page():
         st.info("💡 **Tip:** Click any **ℹ️** button next to a term for its definition!")
 
 def clinical_page():
-    scroll_to_top()
     st.title("🩺 Clinical Assessment")
     st.markdown("---")
 
@@ -485,48 +220,47 @@ def clinical_page():
         st.markdown("### 📋 Patient Information")
         col1, col2 = st.columns(2)
         with col1:
-            name = st.text_input("👤 Patient Name", placeholder="Enter patient name", key="patient_name")
+            name = st.text_input("👤 Patient Name", placeholder="Enter patient name")
         with col2:
-            age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35, key="patient_age")
-        
-        duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"], key="duration")
+            age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35)
+        duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
 
     st.markdown("---")
     st.markdown("### 🔍 Clinical Examination")
     st.markdown("*Rate each symptom based on severity*")
+    st.markdown("---")
 
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
 
-    # Display clinical features with popover inline with name
+    # Display clinical features in clean rows
     for i, (display, col_name) in enumerate(items):
-        with st.container():
-            # Name and popover in same line
-            col1, col2 = st.columns([1, 3])
-            with col1:
+        # Feature name with popover
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.markdown(f"**{display}**")
+            with st.popover("ℹ️"):
                 st.markdown(f"**{display}**")
-                with st.popover("ℹ️"):
-                    st.markdown(f"**{display}**")
-                    st.caption(GLOSSARY.get(display, "Definition coming soon..."))
-            with col2:
-                if display == "Family History":
-                    clinical_data[display] = st.radio(
-                        "", ["No", "Yes"], 
-                        key=f"clinical_{i}", 
-                        horizontal=True, 
-                        label_visibility="collapsed"
-                    )
-                else:
-                    clinical_data[display] = st.radio(
-                        "", ["None", "Mild", "Moderate", "Severe"], 
-                        index=0,
-                        key=f"clinical_{i}", 
-                        horizontal=True, 
-                        label_visibility="collapsed"
-                    )
+                st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+        with col2:
+            if display == "Family History":
+                clinical_data[display] = st.radio(
+                    "", ["No", "Yes"], 
+                    key=f"clinical_{i}", 
+                    horizontal=True, 
+                    label_visibility="collapsed"
+                )
+            else:
+                clinical_data[display] = st.radio(
+                    "", ["None", "Mild", "Moderate", "Severe"], 
+                    index=0,
+                    key=f"clinical_{i}", 
+                    horizontal=True, 
+                    label_visibility="collapsed"
+                )
         st.markdown("---")
 
-    notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80, key="clinical_notes")
+    notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80)
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -547,73 +281,9 @@ def clinical_page():
                 'notes': notes, 
                 'time': datetime.now().strftime("%Y-%m-%d %H:%M")
             }
-            st.session_state.page = 'histopathology'
-            st.rerun()
-
-def histopathology_page():
-    scroll_to_top()
-    st.title("🔬 Histopathology Analysis")
-    st.markdown("---")
-
-    if not st.session_state.patient_data or 'clinical' not in st.session_state.patient_data:
-        st.warning("⚠️ Please complete the clinical assessment first.")
-        if st.button("← Go to Clinical Assessment", use_container_width=True):
-            st.session_state.page = 'clinical'
-            st.rerun()
-        return
-
-    st.info(f"**Patient:** {st.session_state.patient_data.get('name', 'Unknown')}")
-
-    histo_data = {}
-    items = list(HISTOPATHOLOGY_FEATURES.items())
-
-    groups = {
-        "📊 Epidermal Changes": items[:8],
-        "🔥 Inflammatory Features": items[8:16],
-        "🏥 Dermal Changes": items[16:]
-    }
-
-    for group_name, group_items in groups.items():
-        with st.expander(group_name, expanded=True):
-            for i, (display, col_name) in enumerate(group_items):
-                with st.container():
-                    # Name and popover in same line
-                    col1, col2 = st.columns([1, 3])
-                    with col1:
-                        st.markdown(f"**{display}**")
-                        with st.popover("ℹ️"):
-                            st.markdown(f"**{display}**")
-                            st.caption(GLOSSARY.get(display, "Definition coming soon..."))
-                    with col2:
-                        histo_data[display] = st.radio(
-                            "", ["None", "Mild", "Moderate", "Severe"], 
-                            index=0,
-                            key=f"histo_{group_name}_{i}", 
-                            horizontal=True, 
-                            label_visibility="collapsed"
-                        )
-                st.markdown("---")
-
-    path_notes = st.text_area("📝 Pathologist's Notes", placeholder="Any microscopic observations...", height=80, key="path_notes")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("← Back to Clinical", use_container_width=True):
-            st.session_state.page = 'clinical'
-            st.rerun()
-    with col2:
-        if st.button("💊 Generate Diagnosis", use_container_width=True, type="primary"):
-            converted = {}
-            for d, v in histo_data.items():
-                m = {"None": "None (0)", "Mild": "Mild (1)", "Moderate": "Moderate (2)", "Severe": "Severe (3)"}
-                converted[d] = m.get(v, "None (0)")
-            st.session_state.patient_data['histopathology'] = converted
-            st.session_state.patient_data['path_notes'] = path_notes
-            st.session_state.page = 'diagnosis'
-            st.rerun()
+            st.switch_page("pages/histopathology.py")
 
 def diagnosis_page():
-    scroll_to_top()
     st.title("📋 Diagnosis Report")
     
     data = st.session_state.patient_data
@@ -621,9 +291,7 @@ def diagnosis_page():
     if not data or 'clinical' not in data:
         st.error("No patient data found. Please start a new assessment.")
         if st.button("Start New Assessment", use_container_width=True):
-            st.session_state.page = 'welcome'
-            st.session_state.patient_data = {}
-            st.rerun()
+            st.switch_page("app.py")
         return
 
     with st.spinner("🧠 Analyzing patient data..."):
@@ -751,18 +419,13 @@ def diagnosis_page():
             
             if st.button("🔄 New Patient Assessment", use_container_width=True):
                 st.session_state.patient_data = {}
-                st.session_state.page = 'welcome'
-                st.rerun()
+                st.switch_page("app.py")
             
         except Exception as e:
             st.error(f"❌ Diagnosis Error: {str(e)}")
             st.markdown("**Possible reasons:**")
             st.markdown("- Missing patient information")
             st.markdown("- Invalid data format")
-            
-            if st.button("← Go Back", use_container_width=True):
-                st.session_state.page = 'clinical'
-                st.rerun()
 
 # ==================== MAIN ====================
 def main():
@@ -782,26 +445,21 @@ def main():
         
         st.markdown("### 🧭 Navigation")
         
-        # Navigation buttons
         if st.button("🏠 Home", use_container_width=True):
-            st.session_state.page = 'welcome'
-            st.rerun()
+            st.switch_page("app.py")
         
         if st.button("🩺 Clinical Assessment", use_container_width=True):
-            st.session_state.page = 'clinical'
-            st.rerun()
+            st.switch_page("app.py")
         
         if st.button("🔬 Histopathology", use_container_width=True):
             if st.session_state.patient_data and 'clinical' in st.session_state.patient_data:
-                st.session_state.page = 'histopathology'
-                st.rerun()
+                st.switch_page("pages/histopathology.py")
             else:
                 st.warning("⚠️ Please complete Clinical Assessment first")
         
         if st.button("📋 Diagnosis Report", use_container_width=True):
             if st.session_state.patient_data and 'histopathology' in st.session_state.patient_data:
-                st.session_state.page = 'diagnosis'
-                st.rerun()
+                st.switch_page("pages/diagnosis.py")
             else:
                 st.warning("⚠️ Please complete all assessments first")
         
@@ -836,24 +494,18 @@ def main():
         
         st.markdown("---")
         
-        # Support
         st.markdown("### 📞 Support")
         st.markdown("📧 lalzareabhishek@gmail.com")
 
     # Page routing
-    if st.session_state.page == 'welcome':
+    query_params = st.query_params
+    page = query_params.get("page", ["welcome"])[0]
+    
+    if page == "welcome":
         welcome_page()
         if st.button("🚀 Start Diagnosis", use_container_width=True):
-            st.session_state.page = 'clinical'
-            st.rerun()
-            
-    elif st.session_state.page == 'clinical':
-        clinical_page()
-        
-    elif st.session_state.page == 'histopathology':
-        histopathology_page()
-        
-    elif st.session_state.page == 'diagnosis':
+            st.switch_page("app.py")
+    elif page == "diagnosis":
         diagnosis_page()
 
 if __name__ == "__main__":
