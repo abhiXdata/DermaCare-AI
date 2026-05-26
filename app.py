@@ -97,8 +97,12 @@ def load_css():
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
+            margin-left: auto;
+            margin-right: auto;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             text-align: center;
+            width: 100%;
+            max-width: 600px;
         }
         
         /* Feature header with name and icon IN ONE LINE */
@@ -106,7 +110,7 @@ def load_css():
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 20px;
         }
         
@@ -116,7 +120,7 @@ def load_css():
             color: #1e3c72;
         }
         
-        /* Popover styling - SMALL ICON NEXT TO NAME */
+        /* Popover styling - LARGE ICON (your original size) */
         [data-testid="stPopover"] {
             display: inline-flex;
             align-items: center;
@@ -126,10 +130,10 @@ def load_css():
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             border-radius: 50% !important;
             border: none !important;
-            width: 30px !important;
-            height: 30px !important;
+            width: 50px !important;
+            height: 50px !important;
             padding: 0 !important;
-            min-width: 30px !important;
+            min-width: 50px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -137,15 +141,16 @@ def load_css():
         }
         
         [data-testid="stPopover"] button:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
             transition: transform 0.2s;
         }
         
         [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 600 !important;
-            font-size: 14px !important;
+            font-size: 18px !important;
             margin: 0 !important;
+            line-height: 1 !important;
         }
 
         div[data-testid="stPopoverBody"] {
@@ -155,26 +160,31 @@ def load_css():
             padding: 1rem !important;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
+            overflow-x: hidden;
+            scrollbar-width: none;
         }
         
         div[data-testid="stPopoverBody"] * {
             color: white !important;
         }
 
-        /* Radio button styling - INSIDE CARD */
+        /* Radio button styling - INSIDE CARD, FIT CONTENT */
         .stRadio {
             margin-top: 0 !important;
+            display: flex !important;
+            justify-content: center !important;
         }
         
         .stRadio > div {
             background: #f8f9fa !important;
-            padding: 15px !important;
+            padding: 12px 20px !important;
             border-radius: 12px !important;
-            display: flex !important;
+            display: inline-flex !important;
             flex-wrap: wrap !important;
             gap: 12px !important;
             justify-content: center !important;
             border: 1px solid #e0e4e8;
+            width: auto !important;
         }
         
         .stRadio > div label {
@@ -191,12 +201,6 @@ def load_css():
         .stRadio > div label:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        /* For Family History (Yes/No) */
-        .stRadio > div label:has(input[value="Yes"]),
-        .stRadio > div label:has(input[value="No"]) {
-            padding: 8px 30px !important;
         }
         
         /* Form Elements */
@@ -239,15 +243,27 @@ def load_css():
             margin: 0.5rem 0;
         }
         
+        /* Center the feature cards */
+        .center-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
         /* Mobile responsive */
         @media (max-width: 768px) {
+            .feature-card {
+                padding: 15px;
+                max-width: 100%;
+            }
+            
             .feature-name {
                 font-size: 1rem;
             }
             
             .stRadio > div {
+                padding: 10px !important;
                 gap: 8px !important;
-                padding: 12px !important;
             }
             
             .stRadio > div label {
@@ -256,7 +272,17 @@ def load_css():
             }
             
             .feature-header {
-                gap: 5px;
+                gap: 8px;
+            }
+            
+            [data-testid="stPopover"] button {
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+            }
+            
+            [data-testid="stPopover"] button p {
+                font-size: 16px !important;
             }
         }
         </style>
@@ -515,15 +541,17 @@ def clinical_page():
 
     # Display clinical features in cards
     for i, (display, col_name) in enumerate(items):
-        # Create a card for each feature
-        with st.container():
+        # Center the card
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            # Feature name and popover in same line
             st.markdown(f"""
             <div class="feature-card">
                 <div class="feature-header">
                     <span class="feature-name">{display}</span>
             """, unsafe_allow_html=True)
             
-            # Popover icon right next to the name (same line)
+            # Popover icon right next to the name
             with st.popover("ℹ️"):
                 st.markdown(f"**{display}**")
                 st.caption(GLOSSARY.get(display, "Definition coming soon..."))
@@ -603,7 +631,9 @@ def histopathology_page():
     for group_name, group_items in groups.items():
         with st.expander(group_name, expanded=True):
             for i, (display, col_name) in enumerate(group_items):
-                with st.container():
+                # Center the card
+                col1, col2, col3 = st.columns([1, 2, 1])
+                with col2:
                     st.markdown(f"""
                     <div class="feature-card">
                         <div class="feature-header">
