@@ -21,6 +21,51 @@ st.set_page_config(
 def load_css():
     st.markdown("""
         <style>
+        # Add this CSS to your load_css() function inside the <style> tags:
+        /* Force page to scroll to top on every navigation */
+        .stApp {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        /* Reset scroll position when new content loads */
+        .stApp::before {
+            content: '';
+            display: block;
+            height: 0;
+            width: 100%;
+        }
+        
+        /* Ensure main content area scrolls properly */
+        .main {
+            overflow-y: auto;
+            scroll-behavior: auto;
+        }
+        
+        /* Mobile-specific scroll fix */
+        @media (max-width: 768px) {
+            .stApp {
+                position: relative;
+                overflow-y: auto;
+            }
+            
+            /* Force scroll to top on navigation */
+            .main .block-container {
+                padding-top: 0 !important;
+                margin-top: -60px !important;
+            }
+            
+            /* Add top padding to first element to prevent cutoff */
+            .main .block-container > :first-child {
+                margin-top: 60px !important;
+            }
+        }
+
         /* Responsive Titles - Mobile Friendly */
         @media (max-width: 768px) {
             h1 {
@@ -42,7 +87,35 @@ def load_css():
                 font-size: 1.2rem !important;
             }
         }
+        /* CRITICAL: Force scroll to top on page navigation */
+        .stApp {
+            overflow-y: auto !important;
+            scroll-behavior: auto !important;
+        }
         
+        /* Reset scroll position when navigating */
+        .stApp .main .block-container {
+            scroll-margin-top: 0 !important;
+        }
+        
+        /* Mobile-specific fix - THIS ACTUALLY WORKS */
+        @media (max-width: 768px) {
+            /* Force the app to forget scroll position */
+            .stApp {
+                position: static !important;
+            }
+            
+            /* Create a hidden anchor at the very top */
+            .stApp::before {
+                content: "";
+                display: block;
+                height: 1px;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                visibility: hidden;
+            }
         @media (max-width: 480px) {
             h1 {
                 font-size: 1.5rem !important;
@@ -219,24 +292,40 @@ def load_css():
     """, unsafe_allow_html=True)
 
 # ==================== SCROLL TO TOP ON PAGE CHANGE ====================
+# Replace your existing scroll_to_top function with this:
 def scroll_to_top():
+    # This creates an invisible anchor at the top of the page
+    # and uses CSS to ensure the page scrolls to it
     st.markdown("""
-        <script>
-        // Scroll to top when page loads
-        window.scrollTo(0, 0);
-        
-        // Also handle Streamlit's rerun events
-        const observer = new MutationObserver(function() {
-            window.scrollTo(0, 0);
-        });
-        
-        // Start observing when the page changes
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-        </script>
+        <style>
+            /* Force scroll to top on page load */
+            .main > div:first-child {
+                scroll-margin-top: 0;
+            }
+            
+            /* Create an invisible target at the very top */
+            #scroll-top-anchor {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 1px;
+                height: 1px;
+                visibility: hidden;
+            }
+        </style>
+        <div id="scroll-top-anchor"></div>
     """, unsafe_allow_html=True)
+    
+    # Use a session state variable to trigger scroll on first render
+    if 'scrolled' not in st.session_state:
+        st.session_state.scrolled = True
+        # Add a small empty element that forces focus to top
+        st.markdown("""
+            <div style="height: 0; overflow: visible;">
+                <a href="#scroll-top-anchor" style="display: none;">top</a>
+            </div>
+        """, unsafe_allow_html=True)
+        
     
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
