@@ -146,7 +146,7 @@ def load_css():
         [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 600 !important;
-            font-size: 16px !important;
+            font-size: 12px !important;
             margin: 0 !important;
             line-height: 0 !important;
         }
