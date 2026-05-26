@@ -217,6 +217,26 @@ def load_css():
         }
         </style>
     """, unsafe_allow_html=True)
+
+# ==================== SCROLL TO TOP ON PAGE CHANGE ====================
+def scroll_to_top():
+    st.markdown("""
+        <script>
+        // Scroll to top when page loads
+        window.scrollTo(0, 0);
+        
+        // Also handle Streamlit's rerun events
+        const observer = new MutationObserver(function() {
+            window.scrollTo(0, 0);
+        });
+        
+        // Start observing when the page changes
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        </script>
+    """, unsafe_allow_html=True)
     
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
@@ -467,6 +487,7 @@ def welcome_page():
             st.rerun()
 
 def symptoms_page():
+    scroll_to_top()
     st.title("🩺 Clinical Assessment")
     st.markdown("---")
 
@@ -523,6 +544,7 @@ def symptoms_page():
         st.rerun()
 
 def histopathology_page():
+    scroll_to_top()
     st.title("🔬 Histopathology Analysis")
     st.markdown("---")
 
@@ -576,6 +598,7 @@ def histopathology_page():
             st.rerun()
 
 def prediction_page():
+    scroll_to_top()
     st.title("📋 Diagnosis Report")
     
     data = st.session_state.patient_data
