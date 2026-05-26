@@ -21,101 +21,235 @@ st.set_page_config(
 def load_css():
     st.markdown("""
         <style>
-        /* Mobile Responsive Styles */
+        /* Responsive Titles - Mobile Friendly */
         @media (max-width: 768px) {
-            .main .block-container {
-                padding: 1rem !important;
-                padding-top: 1rem !important;
+            h1 {
+                font-size: 1.8rem !important;
             }
-            
-            h1 { font-size: 1.8rem !important; }
-            h2 { font-size: 1.4rem !important; }
-            h3 { font-size: 1.2rem !important; }
-            
-            .stButton button {
-                width: 100% !important;
-                padding: 0.6rem !important;
+            h2 {
+                font-size: 1.4rem !important;
+            }
+            h3 {
+                font-size: 1.2rem !important;
+            }
+            .stMarkdown h1 {
+                font-size: 1.8rem !important;
+            }
+            .stMarkdown h2 {
+                font-size: 1.4rem !important;
+            }
+            .stMarkdown h3 {
+                font-size: 1.2rem !important;
             }
         }
         
-        .stApp { background: #f0f2f6; }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            h2 {
+                font-size: 1.2rem !important;
+            }
+            h3 {
+                font-size: 1.1rem !important;
+            }
+            .stMarkdown h1 {
+                font-size: 1.5rem !important;
+            }
+            .stMarkdown h2 {
+                font-size: 1.2rem !important;
+            }
+            .stMarkdown h3 {
+                font-size: 1.1rem !important;
+            }
+        }
         
+        .stApp {
+            background: #f0f2f6;
+        }
         [data-testid="stSidebar"] {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         }
-        [data-testid="stSidebar"] * { color: white !important; }
-        
-        /* Clean card styling for form fields */
-        .clinical-card, .histo-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        [data-testid="stSidebar"] * {
+            color: white !important;
         }
-        
-        /* Better radio button styling */
-        .stRadio > div {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            background: white;
-            padding: 0.5rem;
-            border-radius: 8px;
+
+        /* ── MAKE EXPANDER TEXT WHITE ── */
+.streamlit-expanderHeader {
+    color: white !important;
+    background: white !important;
+}
+.streamlit-expanderHeader p {
+    color: white !important;
+}
+.streamlit-expanderHeader:hover {
+    background: white !important;
+}
+
+/* Expander content background */
+.streamlit-expanderContent {
+    background: white !important;
+    color:white
+}
+
+/* Expander content text color */
+.streamlit-expanderContent p,
+.streamlit-expanderContent div,
+.streamlit-expanderContent span {
+    color: white !important;
+}
+
+        /* ── Buttons only – scoped tightly so it doesn't bleed ── */
+        [data-testid="stBaseButton-secondary"],
+        [data-testid="stBaseButton-primary"] {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+            border: none !important;
+            border-radius: 8px !important;
         }
-        
-        .stRadio > div label {
-            background: #f0f2f6;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            margin: 0;
-            font-size: 0.85rem;
+        [data-testid="stBaseButton-secondary"] p,
+        [data-testid="stBaseButton-primary"] p,
+        [data-testid="stBaseButton-secondary"] span,
+        [data-testid="stBaseButton-primary"] span {
+            color: white !important;
+            font-weight: 600 !important;
         }
-        
-        /* Info button styling */
+
+        /* ── SIDEBAR BUTTONS - Make them visible on blue background ── */
+        [data-testid="stSidebar"] .stButton button {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+            width: 100% !important;
+        }
+        [data-testid="stSidebar"] .stButton button:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* ── Popover trigger button (the ℹ️ pill) ── */
         [data-testid="stPopover"] button {
             background: #1e3c72 !important;
-            border-radius: 50% !important;
-            width: 24px !important;
-            height: 24px !important;
+            border-radius: 8px !important;
+            border: none !important;
+            min-width: 40px !important;
+            padding: 5px 10px !important;
+        }
+        [data-testid="stPopover"] button p {
+            color: white !important;
+            font-weight: 700 !important;
+        }
+
+        /* ── Popover dialog box - SIZE & STRUCTURE ONLY, COLORS UNCHANGED ── */
+        div[data-testid="stPopoverBody"] {
+            min-width: 280px !important;
+            max-width: 350px !important;
+            width: auto !important;
+            border-radius: 12px !important;
+            padding: 1.25rem !important;
+            color: white !important;
+        }
+
+        /* Content spacing inside popover */
+        div[data-testid="stPopoverBody"] > div {
+            display: flex !important;
+            color: white !important;
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+        }
+
+        /* Title text spacing */
+        div[data-testid="stPopoverBody"] p:first-of-type {
+            margin-bottom: 0.5rem !important;
+            font-size: 1rem !important;
+            color: white !important;
+        }
+
+        /* Description text spacing */
+        div[data-testid="stPopoverBody"] .stCaptionContainer p {
+            margin-bottom: 0 !important;
+            line-height: 1.4 !important;
+        }
+
+        /* NO CHANGES to wrapper - keeping original */
+        div[data-baseweb="popover"] > div {
             padding: 0 !important;
-            min-width: 24px !important;
+        }
+
+        /* Popover arrow - NO COLOR CHANGES */
+        div[data-baseweb="popover"] svg {
+            stroke: none !important;
+        }
+
+        /* ── Fix text area / notes ── */
+        textarea,
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stTextInput"] input {
+            background: #ffffff !important;
+            color: #2c3e50 !important;
+            border: 1px solid #c0cfe8 !important;
+            border-radius: 8px !important;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #1e3c72 !important;
+        }
+        p, li, label {
+            color: #2c3e50 !important;
+        }
+        .stRadio > div {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .streamlit-expanderHeader {
+            background: #e8f0fe;
+            color: #1e3c72 !important;
+        }
+        .diagnosis-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .diagnosis-card * {
+            color: white !important;
         }
         </style>
     """, unsafe_allow_html=True)
-
+    
 # ==================== GLOSSARY DATA ====================
 GLOSSARY = {
-    "Skin Redness": "🩸 Skin looks red because blood vessels expand",
+    "Skin Redness": "🩸 Skin looks red because blood vessels expand - like a mild sunburn",
     "Skin Scaling": "❄️ Dry skin that flakes off like dandruff",
-    "Definite Borders": "🗺️ Clearly see where rash starts and ends",
-    "Itching": "🤚 Feeling that makes you want to scratch",
-    "Koebner Phenomenon": "✨ New rash appears where skin was injured",
+    "Definite Borders": "🗺️ You can clearly see where the rash starts and ends",
+    "Itching": "🤚 Feeling that makes you want to scratch your skin",
+    "Koebner Phenomenon": "✨ New rash appears exactly where skin was injured",
     "Polygonal Papules": "📐 Small raised bumps with straight edges",
     "Follicular Papules": "⚫ Small bumps around hair roots",
     "Oral Mucosal Involvement": "👄 Rash or sores inside the mouth",
-    "Knee/Elbow Involvement": "🦵 Rash on knees or elbows",
-    "Scalp Involvement": "💇 Rash on the scalp",
-    "Family History": "👨‍👩‍👧 Blood relatives had similar problems",
-    "Melanin incontinence": "🎨 Skin pigment leaks from damaged cells",
-    "Eosinophils in infiltrate": "🦠 Allergy cells gather in skin",
-    "PNL infiltrate": "⚔️ Germ-fighting cells rush in",
+    "Knee/Elbow Involvement": "🦵 Rash specifically on the knees or elbows",
+    "Scalp Involvement": "💇 Rash on the head where hair grows",
+    "Family History": "👨‍👩‍👧 Blood relatives had similar skin problems",
+    "Melanin incontinence": "🎨 Skin pigment leaks out from damaged cells",
+    "Eosinophils in infiltrate": "🦠 Allergy cells gather in the skin",
+    "PNL infiltrate": "⚔️ Germ-fighting cells rush into the skin",
     "Fibrosis of papillary dermis": "🔧 Small scars form in top skin layer",
-    "Exocytosis": "🏃 Fighting cells move into outer skin",
+    "Exocytosis": "🏃 Fighting cells move into outer skin layer",
     "Acanthosis": "📏 Skin's middle layer gets thicker",
-    "Hyperkeratosis": "🛡️ Outer skin layer gets too thick",
+    "Hyperkeratosis": "🛡️ Outer skin layer gets too thick like a callus",
     "Parakeratosis": "🔬 Skin cells don't mature properly",
     "Clubbing of rete ridges": "👊 Finger-like projections become rounded",
     "Elongation of rete ridges": "📈 Skin projections grow longer",
     "Thinning of suprapapillary epidermis": "🥚 Skin becomes very thin above bumps",
     "Spongiform pustule": "💧 Pimple-like pockets of pus form",
     "Munro microabscess": "🔬 Tiny collections of fighting cells",
-    "Focal hypergranulosis": "📍 Some spots of grain layer thicken",
-    "Disappearance of granular layer": "👻 Grain layer vanishes",
+    "Focal hypergranulosis": "📍 Some spots of grain layer get thicker",
+    "Disappearance of granular layer": "👻 Grain layer vanishes in some areas",
     "Vacuolisation of basal layer": "🫧 Bottom cells form empty bubbles",
-    "Spongiosis": "💦 Skin cells swell with fluid",
-    "Saw-tooth appearance": "🪚 Bottom of skin looks jagged",
-    "Follicular horn plug": "🚫 Hair hole blocked with dead cells",
+    "Spongiosis": "💦 Skin cells swell with extra fluid",
+    "Saw-tooth appearance": "🪚 Bottom of skin looks jagged like a saw",
+    "Follicular horn plug": "🚫 Hair hole gets blocked with dead cells",
     "Perifollicular parakeratosis": "🌀 Immature cells surround hair holes",
     "Inflammatory mononuclear infiltrate": "⏰ Long-term fighting cells gather",
     "Band-like infiltrate": "🎗️ Fighting cells line up like a ribbon"
@@ -185,24 +319,31 @@ DISEASE_ICONS = {
 def load_dataset():
     try:
         df = pd.read_csv('dermatology.csv')
+        
+        # Replace all '?' with NaN for all columns
         df = df.replace('?', np.nan)
         
+        # Handle Age column
         if 'Age' in df.columns:
             df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
             df['Age'].fillna(df['Age'].median(), inplace=True)
         else:
             df['Age'] = np.random.randint(1, 90, len(df))
         
+        # Handle all other columns - convert to numeric
         for col in df.columns:
             if col != 'Age' and col != 'class':
                 df[col] = pd.to_numeric(df[col], errors='coerce')
+                # Fill NaN with median of that column
                 df[col].fillna(df[col].median(), inplace=True)
         
+        # Get available clinical columns
         clinical_cols = []
         for col in CLINICAL_FEATURES.values():
             if col in df.columns:
                 clinical_cols.append(col)
         
+        # Get available histopathology columns
         histo_cols = []
         for col in HISTOPATHOLOGY_FEATURES.values():
             if col in df.columns:
@@ -210,6 +351,7 @@ def load_dataset():
         
         clinical_cols.append('Age')
         
+        # If no valid columns found, create demo data
         if len(clinical_cols) <= 1:
             return create_demo_data()
         
@@ -224,20 +366,23 @@ def create_demo_data():
     n = 366
     data = {}
     
+    # Clinical features - ensure numeric values only (0-3, and 0-1 for family_history)
     for col in CLINICAL_FEATURES.values():
         if col == 'family_history':
-            data[col] = np.random.randint(0, 2, n)
+            data[col] = np.random.randint(0, 2, n)  # 0 or 1 only
         else:
-            data[col] = np.random.randint(0, 4, n)
+            data[col] = np.random.randint(0, 4, n)  # 0-3 only
     
+    # Histopathology features - ensure numeric values only (0-3)
     for col in HISTOPATHOLOGY_FEATURES.values():
-        data[col] = np.random.randint(0, 4, n)
+        data[col] = np.random.randint(0, 4, n)  # 0-3 only
     
-    data['Age'] = np.random.randint(1, 90, n)
-    data['class'] = np.random.randint(1, 7, n)
+    data['Age'] = np.random.randint(1, 90, n)  # 1-89 only
+    data['class'] = np.random.randint(1, 7, n)  # 1-6 only
     
     df = pd.DataFrame(data)
     
+    # Ensure all columns are numeric
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
         df[col].fillna(df[col].median(), inplace=True)
@@ -253,7 +398,10 @@ def train_model():
     y = df['class']
     all_cols = clinical_cols + histo_cols
     
+    # Final check - ensure no NaN values remain
     X = df[all_cols].copy()
+    
+    # Fill any remaining NaN with 0
     X = X.fillna(0)
     y = y.fillna(1).astype(int)
     
@@ -263,8 +411,10 @@ def train_model():
     model.fit(X_scaled, y)
     return model, scaler, all_cols
     
+# ==================== CACHED MODEL METRICS (REDUNDANCY REMOVED) ====================
 @st.cache_data
 def get_model_metrics():
+    """Calculate model performance metrics once and cache them"""
     df, clinical_cols, histo_cols = load_dataset()
     y = df['class']
     all_cols = clinical_cols + histo_cols
@@ -293,9 +443,9 @@ def get_model_metrics():
 # ==================== PAGES ====================
 def welcome_page():
     st.markdown("""
-        <div style="text-align: center; margin-top: 1rem;">
-            <h1 style="font-size: 2.5rem;">🩺 DermaCare AI</h1>
-            <p style="font-size: 1rem; color: #2a5298;">Intelligent Dermatology Diagnosis Assistant</p>
+        <div style="text-align: center; margin-top: 2rem;">
+            <h1 style="font-size: 3.5rem;">🩺 DermaCare AI</h1>
+            <p style="font-size: 1.2rem; color: #2a5298;">Intelligent Dermatology Diagnosis Assistant</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -306,7 +456,7 @@ def welcome_page():
         st.markdown("---")
         st.markdown("#### ✨ Features")
         st.markdown("""
-        - 🔍 Easy-to-use selection
+        - 🔍 Easy-to-use radio buttons
         - 🔬 Clinical + Microscopy analysis
         - 🎯 AI-powered predictions
         """)
@@ -320,51 +470,41 @@ def symptoms_page():
     st.title("🩺 Clinical Assessment")
     st.markdown("---")
 
-    # Patient info in a clean row
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
-        name = st.text_input("👤 Patient Name", placeholder="Enter patient name")
+        name = st.text_input("👤 Patient Name")
     with col2:
         age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35)
-    
-    duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
+    with col3:
+        duration = st.selectbox("⏰ Duration", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
 
     st.markdown("### 🔍 Clinical Examination")
-    st.markdown("---")
 
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
+    col1, col2, col3 = st.columns(3)
 
-    # Display clinical features in a clean vertical list
     for i, (display, col_name) in enumerate(items):
-        with st.container():
-            col_label, col_radio = st.columns([2, 3])
-            with col_label:
-                info_btn = st.popover("ℹ️", use_container_width=False)
-                with info_btn:
+        with [col1, col2, col3][i % 3]:
+            label_col, info_col = st.columns([4, 1])
+            with label_col:
+                st.markdown(f"**{display}**")
+            with info_col:
+                with st.popover("ℹ️"):
                     st.markdown(f"**{display}**")
                     st.caption(GLOSSARY.get(display, "Definition coming soon..."))
-                st.markdown(f"**{display}**")
-            
-            with col_radio:
-                if display == "Family History":
-                    clinical_data[display] = st.radio(
-                        "", ["No", "Yes"], 
-                        key=f"clinical_{i}", 
-                        horizontal=True, 
-                        label_visibility="collapsed"
-                    )
-                else:
-                    clinical_data[display] = st.radio(
-                        "", ["None", "Mild", "Moderate", "Severe"], 
-                        index=0,
-                        key=f"clinical_{i}", 
-                        horizontal=True, 
-                        label_visibility="collapsed"
-                    )
-        st.markdown("---")
 
-    notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80)
+            if display == "Family History":
+                clinical_data[display] = st.radio(
+                    "", ["No", "Yes"], key=f"c{i}", horizontal=True, label_visibility="collapsed"
+                )
+            else:
+                clinical_data[display] = st.radio(
+                    "", ["None", "Mild", "Moderate", "Severe"], index=0,
+                    key=f"c{i}", horizontal=True, label_visibility="collapsed"
+                )
+
+    notes = st.text_area("📝 Notes", height=80)
 
     if st.button("🔬 Proceed to Histopathology", use_container_width=True):
         converted = {}
@@ -376,12 +516,8 @@ def symptoms_page():
                 converted[d] = m.get(v, "None (0)")
 
         st.session_state.patient_data = {
-            'name': name or "Anonymous", 
-            'age': age, 
-            'duration': duration,
-            'clinical': converted, 
-            'notes': notes, 
-            'time': datetime.now().strftime("%Y-%m-%d %H:%M")
+            'name': name or "Anonymous", 'age': age, 'duration': duration,
+            'clinical': converted, 'notes': notes, 'time': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
         st.session_state.page = 'histopathology'
         st.rerun()
@@ -395,44 +531,37 @@ def histopathology_page():
     histo_data = {}
     items = list(HISTOPATHOLOGY_FEATURES.items())
 
-    # Group definitions
-    groups = {
-        "📊 Epidermal Changes": items[:8],
-        "🔥 Inflammatory Features": items[8:16],
-        "🏥 Dermal Changes": items[16:]
-    }
-
-    for group_name, group_items in groups.items():
-        with st.expander(group_name, expanded=True):
-            for i, (display, col_name) in enumerate(group_items):
-                with st.container():
-                    col_label, col_radio = st.columns([2, 3])
-                    with col_label:
-                        info_btn = st.popover("ℹ️", use_container_width=False)
-                        with info_btn:
-                            st.markdown(f"**{display}**")
-                            st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+    def render_histo_group(group_items, key_prefix):
+        col1, col2 = st.columns(2)
+        for i, (display, col_name) in enumerate(group_items):
+            with col1 if i % 2 == 0 else col2:
+                label_col, info_col = st.columns([4, 1])
+                with label_col:
+                    st.markdown(f"**{display}**")
+                with info_col:
+                    with st.popover("ℹ️"):
                         st.markdown(f"**{display}**")
-                    
-                    with col_radio:
-                        histo_data[display] = st.radio(
-                            "", ["None", "Mild", "Moderate", "Severe"], 
-                            index=0,
-                            key=f"histo_{group_name}_{i}", 
-                            horizontal=True, 
-                            label_visibility="collapsed"
-                        )
-                st.markdown("---")
+                        st.caption(GLOSSARY.get(display, "Definition coming soon..."))
 
-    path_notes = st.text_area("📝 Pathologist's Notes", placeholder="Any microscopic observations...", height=80)
+                histo_data[display] = st.radio(
+                    "", ["None", "Mild", "Moderate", "Severe"], index=0,
+                    key=f"{key_prefix}_{i}", horizontal=True, label_visibility="collapsed"
+                )
 
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("← Back", use_container_width=True):
-            st.session_state.page = 'symptoms'
-            st.rerun()
+    with st.expander("📊 Epidermal Changes", expanded=True):
+        render_histo_group(items[:8], "h1")
+
+    with st.expander("🔥 Inflammatory Features", expanded=True):
+        render_histo_group(items[8:16], "h2")
+
+    with st.expander("🏥 Dermal Changes", expanded=True):
+        render_histo_group(items[16:], "h3")
+
+    path_notes = st.text_area("📝 Pathologist's Notes", height=80)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("💊 Generate Diagnosis", use_container_width=True, type="primary"):
+        if st.button("💊 Generate Diagnosis", use_container_width=True):
             converted = {}
             for d, v in histo_data.items():
                 m = {"None": "None (0)", "Mild": "Mild (1)", "Moderate": "Moderate (2)", "Severe": "Severe (3)"}
@@ -442,11 +571,16 @@ def histopathology_page():
             st.session_state.page = 'prediction'
             st.rerun()
 
+        if st.button("← Back", use_container_width=True):
+            st.session_state.page = 'symptoms'
+            st.rerun()
+
 def prediction_page():
     st.title("📋 Diagnosis Report")
     
     data = st.session_state.patient_data
     
+    # Check if data exists
     if not data or 'clinical' not in data:
         st.error("No patient data found. Please start a new assessment.")
         if st.button("Start New Assessment", use_container_width=True):
@@ -456,10 +590,13 @@ def prediction_page():
 
     with st.spinner("🧠 Analyzing patient data..."):
         try:
+            # Get the trained model
             model, scaler, features = train_model()
             
+            # Build input
             inputs = []
             
+            # 1. Clinical features (11 features)
             for display, col_name in CLINICAL_FEATURES.items():
                 val = data['clinical'].get(display, "None (0)")
                 if display == "Family History":
@@ -468,6 +605,7 @@ def prediction_page():
                     severity_map = {"None (0)": 0, "Mild (1)": 1, "Moderate (2)": 2, "Severe (3)": 3}
                     inputs.append(severity_map.get(val, 0))
             
+            # 2. Histopathology features (22 features)
             if 'histopathology' in data:
                 for display, col_name in HISTOPATHOLOGY_FEATURES.items():
                     val = data['histopathology'].get(display, "None (0)")
@@ -476,8 +614,10 @@ def prediction_page():
             else:
                 inputs.extend([0] * len(HISTOPATHOLOGY_FEATURES))
             
+            # 3. Age
             inputs.append(data['age'])
             
+            # Feature count adjustment
             expected_features = len(features)
             if len(inputs) != expected_features:
                 if len(inputs) < expected_features:
@@ -485,6 +625,7 @@ def prediction_page():
                 else:
                     inputs = inputs[:expected_features]
             
+            # Predict
             X = np.array(inputs).reshape(1, -1)
             X_scaled = scaler.transform(X)
             pred = model.predict(X_scaled)[0]
@@ -493,36 +634,42 @@ def prediction_page():
             disease = DISEASES.get(pred, "Unknown")
             confidence = probs[pred - 1] * 100
             
-            # Diagnosis Card
+            # ==================== CLEAN UI ====================
+            
+            # Main Diagnosis Card
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); 
-                        border-radius: 20px; padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;">
-                <div style="font-size: 3rem;">{DISEASE_ICONS.get(disease, '🏥')}</div>
-                <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; letter-spacing: 2px;">PRIMARY DIAGNOSIS</div>
-                <div style="color: white; font-size: 1.8rem; font-weight: bold; margin: 0.5rem 0;">{disease}</div>
+                        border-radius: 20px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
+                <div style="font-size: 4rem;">{DISEASE_ICONS.get(disease, '🏥')}</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 1rem; letter-spacing: 2px;">PRIMARY DIAGNOSIS</div>
+                <div style="color: white; font-size: 2.5rem; font-weight: bold; margin: 0.5rem 0;">{disease}</div>
                 <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 0.5rem; display: inline-block;">
                     Confidence: {confidence:.1f}%
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
+            # Two column layout for metrics
             col1, col2 = st.columns(2)
             
             with col1:
+                # Confidence Meter
                 st.markdown("### 📊 Confidence Level")
                 st.progress(int(confidence))
                 st.caption(f"{confidence:.1f}% confidence")
                 
+                # Patient Info Card - BLACK TEXT FIXED
                 st.markdown("### 👤 Patient Summary")
                 st.markdown(f"""
-                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px;">
-                    <b>📛 Name:</b> {data['name']}<br>
-                    <b>🎂 Age:</b> {data['age']} years<br>
-                    <b>⏰ Duration:</b> {data['duration']}
+                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; color: #1e3c72;">
+                    <b style="color: #1e3c72;">📛 Name:</b> <span style="color: #2c3e50;">{data['name']}</span><br>
+                    <b style="color: #1e3c72;">🎂 Age:</b> <span style="color: #2c3e50;">{data['age']} years</span><br>
+                    <b style="color: #1e3c72;">⏰ Duration:</b> <span style="color: #2c3e50;">{data['duration']}</span>
                 </div>
                 """, unsafe_allow_html=True)
             
             with col2:
+                # Differential Diagnoses
                 st.markdown("### 🎯 Differential Diagnoses")
                 top = np.argsort(probs)[-4:][::-1]
                 for idx in top:
@@ -532,6 +679,7 @@ def prediction_page():
                     st.progress(int(prob))
                     st.caption(f"{prob:.1f}%")
             
+            # Positive Findings (Collapsible)
             with st.expander("🔍 Positive Clinical Findings", expanded=False):
                 findings = []
                 for s, v in data['clinical'].items():
@@ -544,54 +692,60 @@ def prediction_page():
                 else:
                     st.markdown("*No significant findings recorded*")
             
+            # Recommendations - BLACK TEXT FIXED
             st.markdown("### 💡 Recommendations")
             rec_col1, rec_col2, rec_col3 = st.columns(3)
             
             with rec_col1:
                 st.markdown("""
-                <div style="background: #e8f0fe; padding: 0.8rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 1.5rem;">📅</div>
-                    <b>Follow-up</b><br>
-                    <small>Schedule in 2-4 weeks</small>
+                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem;">📅</div>
+                    <b style="color: #1e3c72;">Follow-up</b><br>
+                    <small style="color: #2c3e50;">Schedule in 2-4 weeks</small>
                 </div>
                 """, unsafe_allow_html=True)
             
             with rec_col2:
                 st.markdown("""
-                <div style="background: #e8f0fe; padding: 0.8rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 1.5rem;">🔬</div>
-                    <b>Additional Tests</b><br>
-                    <small>Consider if indicated</small>
+                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem;">🔬</div>
+                    <b style="color: #1e3c72;">Additional Tests</b><br>
+                    <small style="color: #2c3e50;">Consider if indicated</small>
                 </div>
                 """, unsafe_allow_html=True)
             
             with rec_col3:
                 st.markdown("""
-                <div style="background: #e8f0fe; padding: 0.8rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 1.5rem;">💊</div>
-                    <b>Treatment</b><br>
-                    <small>Initiate appropriate therapy</small>
+                <div style="background: #e8f0fe; padding: 1rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem;">💊</div>
+                    <b style="color: #1e3c72;">Treatment</b><br>
+                    <small style="color: #2c3e50;">Initiate appropriate therapy</small>
                 </div>
                 """, unsafe_allow_html=True)
             
+            # Disclaimer and Actions
             st.markdown("---")
             st.caption("⚕️ **Disclaimer:** AI-assisted prediction - Please confirm with a qualified dermatologist")
             
-            if st.button("🔄 New Patient Assessment", use_container_width=True):
-                for key in list(st.session_state.keys()):
-                    del st.session_state[key]
-                st.rerun()
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("🔄 New Patient Assessment", use_container_width=True):
+                    for key in list(st.session_state.keys()):
+                        del st.session_state[key]
+                    st.rerun()
             
         except Exception as e:
             st.error(f"❌ Diagnosis Error: {str(e)}")
             st.markdown("**Possible reasons:**")
             st.markdown("- Missing patient information")
             st.markdown("- Invalid data format")
+            st.markdown("- Dataset loading issue")
             
-            if st.button("← Go Back", use_container_width=True):
-                st.session_state.page = 'symptoms'
-                st.rerun()
-
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("← Go Back", use_container_width=True):
+                    st.session_state.page = 'symptoms'
+                    st.rerun()
 # ==================== MAIN ====================
 def main():
     load_css()
@@ -599,7 +753,7 @@ def main():
     with st.sidebar:
         st.markdown("""
             <div style="text-align: center; padding: 1rem;">
-                <div style="font-size: 2.5rem;">🩺</div>
+                <div style="font-size: 3rem;">🩺</div>
                 <h3 style="color: white;">DermaCare AI</h3>
                 <p style="color: rgba(255,255,255,0.9);">Version 2.0</p>
             </div>
@@ -607,6 +761,8 @@ def main():
 
         st.markdown("---")
         
+        # Quick Actions
+        st.markdown("### ⚡ Quick Actions")
         if st.button("🏠 Home", use_container_width=True):
             st.session_state.page = 'welcome'
             st.session_state.patient_data = {}
@@ -618,6 +774,7 @@ def main():
         
         st.markdown("---")
         
+        # Current Session Info
         if st.session_state.patient_data and st.session_state.page != 'welcome':
             st.markdown("### 📋 Current Session")
             st.markdown(f"**Patient:** {st.session_state.patient_data.get('name', 'N/A')}")
@@ -626,6 +783,7 @@ def main():
         
         st.markdown("---")
         
+        # Model Performance - USING CACHED METRICS (NO REDUNDANCY)
         st.markdown("### 🎯 Model Performance")
         try:
             metrics = get_model_metrics()
@@ -640,6 +798,8 @@ def main():
             st.markdown("- **F1 Score:** 96.0%")
         
         st.markdown("---")
+        
+        # Support
         st.markdown("### 📞 Support")
         st.markdown("📧 lalzareabhishek@gmail.com")
 
