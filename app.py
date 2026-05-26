@@ -21,31 +21,7 @@ st.set_page_config(
 def load_css():
     st.markdown("""
         <style>
-        /* Responsive Titles - Mobile Friendly */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem !important;
-            }
-            h2 {
-                font-size: 1.4rem !important;
-            }
-            h3 {
-                font-size: 1.2rem !important;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem !important;
-            }
-            h2 {
-                font-size: 1.2rem !important;
-            }
-            h3 {
-                font-size: 1.1rem !important;
-            }
-        }
-        
+        /* Global Styles */
         .stApp {
             background: #f0f2f6;
         }
@@ -63,7 +39,7 @@ def load_css():
             color: white !important;
         }
 
-        /* Buttons */
+        /* Button styling */
         [data-testid="stBaseButton-secondary"],
         [data-testid="stBaseButton-primary"] {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
@@ -94,147 +70,40 @@ def load_css():
         /* Feature Card Styling */
         .feature-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 650px;
-        }
-        
-        /* Feature header with name and icon IN ONE LINE */
-        .feature-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .feature-name {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #1e3c72;
-        }
-        
-        /* Custom info button inside card */
-        .custom-info-btn {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            color: white;
-            transition: transform 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        .custom-info-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        /* Radio button container */
-        .radio-container {
-            background: #f8f9fa;
-            padding: 15px 20px;
             border-radius: 12px;
-            display: inline-flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             border: 1px solid #e0e4e8;
-            width: auto;
         }
         
-        .radio-option {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            padding: 8px 20px;
-            border-radius: 25px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            font-size: 0.9rem;
-        }
-        
-        .radio-option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        /* Hide default Streamlit radio buttons */
-        .stRadio {
-            display: flex !important;
-            justify-content: center !important;
-        }
-        
-        .stRadio > div {
-            background: #f8f9fa !important;
-            padding: 15px 20px !important;
-            border-radius: 12px !important;
-            display: inline-flex !important;
-            flex-wrap: wrap !important;
-            gap: 12px !important;
-            justify-content: center !important;
-            border: 1px solid #e0e4e8 !important;
-            width: auto !important;
-        }
-        
-        .stRadio > div label {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
-            padding: 8px 20px !important;
-            border-radius: 25px !important;
-            margin: 0 !important;
-            font-size: 0.9rem !important;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: white !important;
-        }
-        
-        .stRadio > div label:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        /* Hide the default popover button since we're using custom */
-        div[data-testid="stPopover"] {
-            display: inline-block;
-        }
-        
-        div[data-testid="stPopover"] button {
+        /* Popover button styling */
+        [data-testid="stPopover"] button {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             border-radius: 50% !important;
             border: none !important;
-            width: 50px !important;
-            height: 50px !important;
+            width: 32px !important;
+            height: 32px !important;
             padding: 0 !important;
-            min-width: 50px !important;
+            min-width: 32px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            cursor: pointer !important;
         }
         
-        div[data-testid="stPopover"] button p {
+        [data-testid="stPopover"] button p {
             color: white !important;
             font-weight: 600 !important;
-            font-size: 20px !important;
+            font-size: 14px !important;
             margin: 0 !important;
         }
 
+        /* Popover content */
         div[data-testid="stPopoverBody"] {
-            min-width: 280px !important;
-            max-width: 350px !important;
+            min-width: 260px !important;
+            max-width: 300px !important;
             border-radius: 12px !important;
-            padding: 1rem !important;
+            padding: 0.8rem !important;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             color: white !important;
         }
@@ -243,10 +112,45 @@ def load_css():
             color: white !important;
         }
 
+        /* Radio button styling - clean and modern */
+        .stRadio {
+            margin-top: 0 !important;
+        }
+        
+        .stRadio > div {
+            background: #f8f9fa !important;
+            padding: 12px !important;
+            border-radius: 10px !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+            justify-content: flex-start !important;
+            border: 1px solid #e0e4e8;
+        }
+        
+        .stRadio > div label {
+            background: white !important;
+            padding: 6px 16px !important;
+            border-radius: 20px !important;
+            margin: 0 !important;
+            font-size: 0.85rem !important;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #1e3c72 !important;
+            border: 1px solid #1e3c72 !important;
+        }
+        
+        .stRadio > div label:hover {
+            background: #1e3c72 !important;
+            color: white !important;
+            transform: translateY(-1px);
+        }
+
         /* Form Elements */
         textarea,
         [data-testid="stTextArea"] textarea,
-        [data-testid="stTextInput"] input {
+        [data-testid="stTextInput"] input,
+        [data-testid="stSelectbox"] div {
             background: #ffffff !important;
             color: #2c3e50 !important;
             border: 1px solid #c0cfe8 !important;
@@ -279,19 +183,20 @@ def load_css():
             color: white !important;
         }
         
-        hr {
-            margin: 0.5rem 0;
-        }
-        
         /* Mobile responsive */
         @media (max-width: 768px) {
-            .feature-card {
-                padding: 15px;
-                max-width: 100%;
+            h1 {
+                font-size: 1.8rem !important;
+            }
+            h2 {
+                font-size: 1.4rem !important;
+            }
+            h3 {
+                font-size: 1.2rem !important;
             }
             
-            .feature-name {
-                font-size: 1rem;
+            .feature-card {
+                padding: 15px;
             }
             
             .stRadio > div {
@@ -300,18 +205,8 @@ def load_css():
             }
             
             .stRadio > div label {
-                padding: 6px 15px !important;
-                font-size: 0.8rem !important;
-            }
-            
-            .feature-header {
-                gap: 8px;
-            }
-            
-            div[data-testid="stPopover"] button {
-                width: 40px !important;
-                height: 40px !important;
-                min-width: 40px !important;
+                padding: 4px 12px !important;
+                font-size: 0.75rem !important;
             }
         }
         </style>
@@ -540,7 +435,7 @@ def welcome_page():
         st.markdown("---")
         st.markdown("#### ✨ Features")
         st.markdown("""
-        - 🔍 Easy-to-use radio buttons
+        - 🔍 Easy-to-use selection
         - 🔬 Clinical + Microscopy analysis
         - 🎯 AI-powered predictions
         - 📱 Mobile friendly
@@ -552,42 +447,35 @@ def clinical_page():
     st.markdown("---")
 
     # Patient Information
-    with st.container():
-        st.markdown("### 📋 Patient Information")
-        col1, col2 = st.columns(2)
-        with col1:
-            name = st.text_input("👤 Patient Name", placeholder="Enter patient name")
-        with col2:
-            age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35)
-        duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
+    col1, col2 = st.columns(2)
+    with col1:
+        name = st.text_input("👤 Patient Name", placeholder="Enter patient name")
+    with col2:
+        age = st.number_input("🎂 Age", min_value=0, max_value=120, value=35)
+    
+    duration = st.selectbox("⏰ Duration of Symptoms", ["< 1 week", "1-4 weeks", "1-3 months", "> 3 months"])
 
     st.markdown("---")
     st.markdown("### 🔍 Clinical Examination")
-    st.markdown("*Rate each symptom based on severity*")
+    st.caption("Rate each symptom based on severity")
 
     clinical_data = {}
     items = list(CLINICAL_FEATURES.items())
 
-    # Display clinical features in cards
+    # Display clinical features
     for i, (display, col_name) in enumerate(items):
-        # Center the card
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            # Open card div
+        with st.container():
+            # Create a card-like container
             st.markdown(f'<div class="feature-card">', unsafe_allow_html=True)
             
-            # Header with name and popover icon in same line
-            st.markdown(f'''
-            <div class="feature-header">
-                <span class="feature-name">{display}</span>
-                { with st.popover("ℹ️"):
+            # Feature name with popover
+            col_label, col_pop = st.columns([6, 1])
+            with col_label:
                 st.markdown(f"**{display}**")
-                st.caption(GLOSSARY.get(display, "Definition coming soon...")) }
-            </div>
-            ''', unsafe_allow_html=True)
-            
-            # Popover icon placed HERE - inside the card, right after name
-            
+            with col_pop:
+                with st.popover("ℹ️"):
+                    st.markdown(f"**{display}**")
+                    st.caption(GLOSSARY.get(display, "Definition coming soon..."))
             
             # Radio buttons
             if display == "Family History":
@@ -606,32 +494,29 @@ def clinical_page():
                     label_visibility="collapsed"
                 )
             
-            # Close card div
             st.markdown('</div>', unsafe_allow_html=True)
 
     notes = st.text_area("📝 Additional Notes", placeholder="Any additional observations...", height=80)
 
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("🔬 Proceed to Histopathology", use_container_width=True, type="primary"):
-            converted = {}
-            for d, v in clinical_data.items():
-                if d == "Family History":
-                    converted[d] = v
-                else:
-                    m = {"None": "None (0)", "Mild": "Mild (1)", "Moderate": "Moderate (2)", "Severe": "Severe (3)"}
-                    converted[d] = m.get(v, "None (0)")
+    if st.button("🔬 Proceed to Histopathology", use_container_width=True, type="primary"):
+        converted = {}
+        for d, v in clinical_data.items():
+            if d == "Family History":
+                converted[d] = v
+            else:
+                m = {"None": "None (0)", "Mild": "Mild (1)", "Moderate": "Moderate (2)", "Severe": "Severe (3)"}
+                converted[d] = m.get(v, "None (0)")
 
-            st.session_state.patient_data = {
-                'name': name or "Anonymous", 
-                'age': age, 
-                'duration': duration,
-                'clinical': converted, 
-                'notes': notes, 
-                'time': datetime.now().strftime("%Y-%m-%d %H:%M")
-            }
-            st.session_state.page = 'histopathology'
-            st.rerun()
+        st.session_state.patient_data = {
+            'name': name or "Anonymous", 
+            'age': age, 
+            'duration': duration,
+            'clinical': converted, 
+            'notes': notes, 
+            'time': datetime.now().strftime("%Y-%m-%d %H:%M")
+        }
+        st.session_state.page = 'histopathology'
+        st.rerun()
 
 def histopathology_page():
     st.title("🔬 Histopathology Analysis")
@@ -655,27 +540,21 @@ def histopathology_page():
         "🏥 Dermal Changes": items[16:]
     }
 
-    # Display histopathology features in cards
+    # Display histopathology features
     for group_name, group_items in groups.items():
         with st.expander(group_name, expanded=True):
             for i, (display, col_name) in enumerate(group_items):
-                # Center the card
-                col1, col2, col3 = st.columns([1, 2, 1])
-                with col2:
-                    # Open card div
+                with st.container():
                     st.markdown(f'<div class="feature-card">', unsafe_allow_html=True)
                     
-                    # Header with name
-                    st.markdown(f'''
-                    <div class="feature-header">
-                        <span class="feature-name">{display}</span>
-                    </div>
-                    ''', unsafe_allow_html=True)
-                    
-                    # Popover icon placed HERE - inside the card
-                    with st.popover("ℹ️"):
+                    # Feature name with popover
+                    col_label, col_pop = st.columns([6, 1])
+                    with col_label:
                         st.markdown(f"**{display}**")
-                        st.caption(GLOSSARY.get(display, "Definition coming soon..."))
+                    with col_pop:
+                        with st.popover("ℹ️"):
+                            st.markdown(f"**{display}**")
+                            st.caption(GLOSSARY.get(display, "Definition coming soon..."))
                     
                     # Radio buttons
                     histo_data[display] = st.radio(
@@ -686,7 +565,6 @@ def histopathology_page():
                         label_visibility="collapsed"
                     )
                     
-                    # Close card div
                     st.markdown('</div>', unsafe_allow_html=True)
 
     path_notes = st.text_area("📝 Pathologist's Notes", placeholder="Any microscopic observations...", height=80)
